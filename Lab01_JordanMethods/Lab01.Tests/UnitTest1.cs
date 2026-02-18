@@ -4,10 +4,6 @@ using Xunit.Abstractions;
 
 namespace Lab01.Tests;
 
-/// <summary>
-/// Demo tests that print intermediate results (Jordan steps, matrix output, etc.).
-/// Main data-driven tests are in InverseMatrixTests, RankCalculatorTests, LinearSystemSolverTests.
-/// </summary>
 public class UnitTest1
 {
     private readonly ITestOutputHelper _output;
