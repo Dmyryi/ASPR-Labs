@@ -1,25 +1,20 @@
 ﻿using System.Runtime.InteropServices;
+using Lab01.Logic.Interfaces;
 
 namespace Lab01.Logic
 {
-    public class JordanSolver
+    public class JordanSolver : IJordan
     {
- 
         public JordanSolver()
         {
           
         }
-
-
-
+        
         public double[,] JordanMethod(double[,] matrixA, int r, int s)
         {
             int rowsCount = matrixA.GetLength(0);
             int columnsCount = matrixA.GetLength(1);
             double[,] nextMatrix = new double[rowsCount, columnsCount];
-
-           
-
             double oldPivot = matrixA[r, s];
 
            
@@ -48,18 +43,6 @@ namespace Lab01.Logic
             }
 
             return nextMatrix;
-        }
-
-        public double[,] InvertMatrix(double[,] matrixA)
-        {
-
-            int n = matrixA.GetLength(0);
-            double[,] result = matrixA;
-            for (int i = 0;i<n; i++)
-            {
-             result = JordanMethod(result, i,i);
-            }
-            return result;
         }
     }
 }
