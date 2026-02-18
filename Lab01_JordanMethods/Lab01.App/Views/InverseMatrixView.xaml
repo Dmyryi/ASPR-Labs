@@ -19,8 +19,8 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="12"/>
-                <ColumnDefinition Width="280"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*" MinWidth="300"/>
             </Grid.ColumnDefinitions>
 
             <!-- Main input card -->
@@ -33,7 +33,7 @@
                     <StackPanel Grid.Row="0">
                         <TextBlock Text="Input Matrix" Style="{StaticResource SectionHeader}"/>
                         <TextBlock Text="rows on new lines, numbers separated by spaces" 
-                                   FontSize="12" Foreground="#8A8A94" Margin="0,-8,0,8"/>
+                                   FontSize="13" Foreground="#E0E0E8" Margin="0,-8,0,8"/>
                     </StackPanel>
                     <TextBox Grid.Row="1" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" 
                              AcceptsReturn="True" Style="{StaticResource InputTextBox}"
@@ -49,15 +49,12 @@
                         <TextBlock Text="Actions" Style="{StaticResource SectionHeader}"/>
                         <Button Command="{Binding ComputeCommand}" Style="{StaticResource ActionButton}" 
                                 HorizontalAlignment="Stretch" Margin="0,0,0,8">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="18" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                <TextBlock Text="Run Computation" FontSize="14" VerticalAlignment="Center"/>
-                            </StackPanel>
+                            <TextBlock Text="Run Computation" FontSize="14" VerticalAlignment="Center"/>
                         </Button>
                         <TextBlock Text="{Binding Status}" Foreground="#8A8A94" FontSize="12" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
-                <Border Style="{StaticResource SmallCard}" VerticalAlignment="Stretch">
+                <Border Style="{StaticResource ResultCard}" VerticalAlignment="Stretch">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -65,7 +62,7 @@
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0" Text="Result" Style="{StaticResource SectionHeader}"/>
                         <TextBox Grid.Row="1" Text="{Binding ResultText, Mode=OneWay}" IsReadOnly="True"
-                                 Style="{StaticResource InputTextBox}" Foreground="#00E676"
+                                 Style="{StaticResource InputTextBox}" Foreground="#FFFFFF"
                                  MinHeight="100" VerticalScrollBarVisibility="Auto" 
                                  VerticalAlignment="Stretch" Margin="0,4,0,0"/>
                     </Grid>
