@@ -56,4 +56,21 @@ public class UnitTest1
         foreach (var x in result)
             _output.WriteLine(x.ToString("F2"));
     }
+
+    [Fact]
+    public void GenerateProtocol_AndSave()
+    {
+        var logger = new CalculationLogger();
+        var jordan = new JordanSolver();
+        var inverter = new MatrixInverter(jordan, logger);
+        var solver = new InverseSolveStrategy(inverter, logger);
+
+        double[,] A = { { 6, 2, 5 }, { -3, 4, -1 }, { 1, 4, 3 } };
+        double[] B = { 1, 6, 6 };
+
+        solver.Solve(A, B);
+        logger.Save("protocol.txt");
+
+        _output.WriteLine("Protocol saved to protocol.txt");
+    }
 }
