@@ -7,6 +7,11 @@ namespace Lab01.Tests
     public class UnitTest1
     {
         private readonly ITestOutputHelper _output;
+        double[,] testMatrix = {
+    { 5, -3, 7 },
+    { -1, 4, 3 },
+    { 6, -2, 5 }
+};
         public UnitTest1(ITestOutputHelper output)
         {
             _output = output;
@@ -15,19 +20,27 @@ namespace Lab01.Tests
         public void TestJordanSteps()
         {
 
-            double[,] testMatrix = {
-    { 5, -3, 7 },
-    { -1, 4, 3 },
-    { 6, -2, 5 }
-};
+            
             var solver = new JordanSolver();
-            var result = solver.JordanMethod(testMatrix); // Твой метод из Class Library
+            var result = solver.JordanMethod(testMatrix, 1,1);
 
-            // Выводим все шаги в консоль тестов
+        
             foreach (var step in result)
             {
                 _output.WriteLine(step.ToString());
-                // Тут выводишь матрицу step.CurrentMatrixState
+               
+            }
+        }
+
+
+        [Fact]
+        public void TestInvertMatrix() {
+            var solver = new JordanSolver();
+            var result = solver.InvertMatrix(testMatrix);
+            foreach (var step in result)
+            {
+                _output.WriteLine(step.ToString("F2"));
+
             }
         }
     }
