@@ -7,18 +7,16 @@ namespace Lab01.App.ViewModels;
 
 public class LinearSystemViewModel : ViewModelBase
 {
-    private ILinearSystemSolver _solver;
+    private readonly IJordan _jordan;
     private string _matrixText = "5 -3 7\n-1 4 3\n6 -2 5";
     private string _vectorText = "13 13 12";
     private string _resultText = string.Empty;
     private string _status = string.Empty;
     private CalculationLogger? _lastLogger;
 
-    public LinearSystemViewModel()
+    public LinearSystemViewModel(IJordan jordan)
     {
-        var jordan = new JordanSolver();
-        var inverter = new MatrixInverter(jordan);
-        _solver = new InverseSolveStrategy(inverter);
+        _jordan = jordan;
         ComputeCommand = new RelayCommand(Compute);
         SaveProtocolCommand = new RelayCommand(SaveProtocol, () => _lastLogger != null);
     }
@@ -84,8 +82,7 @@ public class LinearSystemViewModel : ViewModelBase
                 return;
             }
             var logger = new CalculationLogger();
-            var jordan = new JordanSolver();
-            var inverter = new MatrixInverter(jordan, logger);
+            var inverter = new MatrixInverter(_jordan, logger);
             var solver = new InverseSolveStrategy(inverter, logger);
             var result = solver.Solve(matrix, vector);
             _lastLogger = logger;

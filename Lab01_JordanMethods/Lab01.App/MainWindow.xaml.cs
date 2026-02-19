@@ -9,7 +9,6 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        DataContext = new MainViewModel();
     }
 
     private void TopBar_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
