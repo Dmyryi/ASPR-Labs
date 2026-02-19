@@ -27,21 +27,12 @@ namespace Lab01.Logic
 
             for (int i = 0; i < n; i++)
             {
-                if (_logger != null)
-                {
-                    _logger.LogStep(i + 1, i + 1, i + 1, result[i, i]);
-                }
+                if (_logger != null) _logger.LogStep(i + 1, i + 1, i + 1, result[i, i]);
                 result = _jordan.JordanMethod(result, i, i);
-                if (_logger != null)
-                {
-                    _logger.LogMatrix("", result);
-                }
+                if (_logger != null) _logger.LogMatrix("", result);
             }
 
-            if (_logger != null)
-            {
-                _logger.LogMatrix("Обернена матриця:", result);
-            }
+            if (_logger != null) _logger.LogMatrix("Обернена матриця:", result);
 
             return result;
         }

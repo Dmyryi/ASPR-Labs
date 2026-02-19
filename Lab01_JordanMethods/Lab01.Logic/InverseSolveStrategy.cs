@@ -34,20 +34,19 @@ namespace Lab01.Logic
             if (_logger != null)
             {
                 _logger.LogTitle("Згенерований протокол обчислення:");
-                _logger.LogSection("Знаходження розв'язків СЛАР 1-м методом (за допомогою оберненої матриці):");
+                _logger.LogSection("Знаходження розв'язків СЛАР 1-м методом...");
             }
 
             var invertedMatrix = _inverter.Invert(vectorA);
+            var x = CalculatedX(vectorB, invertedMatrix);
 
             if (_logger != null)
             {
                 _logger.LogVector("Вхідна матриця В:", vectorB);
-                var x = CalculatedX(vectorB, invertedMatrix);
                 _logger.LogFinalCalculation(x, invertedMatrix, vectorB);
-                return x;
             }
 
-            return CalculatedX(vectorB, invertedMatrix);
+            return x;
         }
     }
 }

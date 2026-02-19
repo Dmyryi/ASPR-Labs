@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Windows.Input;
-using Lab01.Logic;
 using Lab01.Logic.Interfaces;
 
 namespace Lab01.App.ViewModels;
@@ -12,10 +11,9 @@ public class RankViewModel : ViewModelBase
     private string _resultText = string.Empty;
     private string _status = string.Empty;
 
-    public RankViewModel()
+    public RankViewModel(IRankCalculator rankCalculator)
     {
-        var jordan = new JordanSolver();
-        _rankCalculator = new RankCalculator(jordan);
+        _rankCalculator = rankCalculator;
         ComputeCommand = new RelayCommand(Compute);
     }
 
@@ -76,6 +74,7 @@ public class RankViewModel : ViewModelBase
     {
         var rows = text.Trim().Split('\n', StringSplitOptions.RemoveEmptyEntries);
         if (rows.Length == 0) return null;
+
         var cols = rows[0].Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (cols.Length == 0) return null;
         var matrix = new double[rows.Length, cols.Length];
@@ -92,3 +91,7 @@ public class RankViewModel : ViewModelBase
         return matrix;
     }
 }
+
+
+
+

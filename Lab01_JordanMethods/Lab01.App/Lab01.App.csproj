@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -9,7 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <ProjectReference Include="..\Lab01.Logic\Lab01.Logic.csproj" />
+    <Resource Include="..\assets\wmremove-transformed.png" Link="wmremove-transformed.png" />
   </ItemGroup>
 
 </Project>

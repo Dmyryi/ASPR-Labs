@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Windows.Input;
-using Lab01.Logic;
 using Lab01.Logic.Interfaces;
 
 namespace Lab01.App.ViewModels;
@@ -12,10 +11,9 @@ public class InverseMatrixViewModel : ViewModelBase
     private string _resultText = string.Empty;
     private string _status = string.Empty;
 
-    public InverseMatrixViewModel()
+    public InverseMatrixViewModel(IMatrixInverter inverter)
     {
-        var jordan = new JordanSolver();
-        _inverter = new MatrixInverter(jordan);
+        _inverter = inverter;
         ComputeCommand = new RelayCommand(Compute);
     }
 
