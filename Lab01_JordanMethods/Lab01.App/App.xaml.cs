@@ -12,6 +12,7 @@ public partial class App : Application
         var services = new ServiceCollection();
 
         services.AddSingleton<IJordan, JordanSolver>();
+        services.AddSingleton<IProtocolSaver, ProtocolSaver>();
         services.AddTransient<IMatrixInverter>(sp => new MatrixInverter(sp.GetRequiredService<IJordan>(), null));
         services.AddTransient<IRankCalculator>(sp => new RankCalculator(sp.GetRequiredService<IJordan>()));
 

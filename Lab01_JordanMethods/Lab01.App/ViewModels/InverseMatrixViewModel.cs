@@ -1,21 +1,28 @@
 using System.Globalization;
 using System.Windows.Input;
+using Lab01.Logic;
 using Lab01.Logic.Interfaces;
 
 namespace Lab01.App.ViewModels;
 
 public class InverseMatrixViewModel : ViewModelBase
 {
-    private readonly IMatrixInverter _inverter;
+    private readonly IJordan _jordan;
+    private readonly IProtocolSaver _protocolSaver;
     private string _inputText = "5 -3 7\n-1 4 3\n6 -2 5";
     private string _resultText = string.Empty;
     private string _status = string.Empty;
+    private string? _lastProtocol;
 
-    public InverseMatrixViewModel(IMatrixInverter inverter)
+    public InverseMatrixViewModel(IJordan jordan, IProtocolSaver protocolSaver)
     {
-        _inverter = inverter;
+        _jordan = jordan;
+        _protocolSaver = protocolSaver;
         ComputeCommand = new RelayCommand(Compute);
+        SaveProtocolCommand = new RelayCommand(SaveProtocol);
     }
+
+    public ICommand SaveProtocolCommand { get; }
 
     public string InputText
     {
@@ -57,17 +64,32 @@ public class InverseMatrixViewModel : ViewModelBase
             if (matrix == null)
             {
                 Status = "Invalid matrix format. Use rows separated by newlines, numbers by space.";
+                _lastProtocol = null;
                 return;
             }
-            var result = _inverter.Invert(matrix);
+            var logger = new CalculationLogger();
+            var inverter = new MatrixInverter(_jordan, logger);
+            var result = inverter.Invert(matrix);
+            _lastProtocol = logger.GetText();
             ResultText = FormatMatrix(result);
             Status = "Done.";
+            CommandManager.InvalidateRequerySuggested();
         }
         catch (Exception ex)
         {
             Status = "Error: " + ex.Message;
             ResultText = string.Empty;
+            _lastProtocol = null;
         }
+    }
+
+    private void SaveProtocol()
+    {
+        var content = string.IsNullOrEmpty(_lastProtocol)
+            ? "=== Обернена матриця ===\r\n\r\nНемає протоколу. Натисніть «Run Computation»."
+            : "=== Обернена матриця ===\r\n\r\n" + _lastProtocol;
+        _protocolSaver.Save(content);
+        Status = "Protocol saved to protocol.txt";
     }
 
     private static double[,]? ParseMatrix(string text)

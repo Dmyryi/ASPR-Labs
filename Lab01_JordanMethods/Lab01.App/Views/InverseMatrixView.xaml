@@ -51,6 +51,10 @@
                                 HorizontalAlignment="Stretch" Margin="0,0,0,8">
                             <TextBlock Text="Run Computation" FontSize="14" VerticalAlignment="Center"/>
                         </Button>
+                        <Button Command="{Binding SaveProtocolCommand}" Style="{StaticResource SecondaryButton}" 
+                                HorizontalAlignment="Stretch" Margin="0,0,0,8">
+                            <TextBlock Text="Save Protocol" FontSize="14" VerticalAlignment="Center"/>
+                        </Button>
                         <TextBlock Text="{Binding Status}" Foreground="#FFF2F2F5" FontSize="12" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
