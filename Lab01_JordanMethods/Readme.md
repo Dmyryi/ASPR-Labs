@@ -22,14 +22,14 @@ Lab1 — десктопний додаток на WPF (C#) для виконан
 
 Тестування програми 
 
-<img width="983" height="554" alt="Знімок екрана 2026-02-24 200852" src="https://github.com/user-attachments/assets/938cf949-c77e-44f5-b7e3-cc640a8651f2" />
+<img width="983" height="554" alt="Знімок екрана 2026-02-24 200852" src="https://github.com/Dmyryi/ASPR-Labs/blob/main/Lab01_JordanMethods/assets/task1.png" />
 
-Рисунок 1 – Пошук оберненої матриці та розв`язок СЛАР
+Рисунок 1 – Пошук оберненої матриці
 
-<img width="981" height="543" alt="Знімок екрана 2026-02-24 201034" src="https://github.com/user-attachments/assets/078053f9-02b0-40f9-a28e-17191539d48f" />
+<img width="981" height="543" alt="Знімок екрана 2026-02-24 201034" src="https://github.com/Dmyryi/ASPR-Labs/blob/main/Lab01_JordanMethods/assets/task2.png" />
 
 Рисунок 2 – Пошук рангу матриці
 
-<img width="585" height="929" alt="image" src="https://github.com/user-attachments/assets/7a02a182-3d64-4658-90a6-ceb2f8c2604e" />
+<img width="585" height="929" alt="image" src="https://github.com/Dmyryi/ASPR-Labs/blob/main/Lab01_JordanMethods/assets/task3.png" />
 
-Рисунок 3 – Згенерований протокол обчислень
+Рисунок 3 – Розв'язок СЛАР
