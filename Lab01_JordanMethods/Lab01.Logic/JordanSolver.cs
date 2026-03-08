@@ -12,6 +12,7 @@ namespace Lab01.Logic
         
         public double[,] JordanMethod(double[,] matrixA, int r, int s)
         {
+            //matrix, 0, 0
             int rowsCount = matrixA.GetLength(0);
             int columnsCount = matrixA.GetLength(1);
             double[,] nextMatrix = new double[rowsCount, columnsCount];

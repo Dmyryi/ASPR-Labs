@@ -7,15 +7,21 @@ namespace Lab01.App.ViewModels;
 public class RankViewModel : ViewModelBase
 {
     private readonly IRankCalculator _rankCalculator;
+    private readonly IProtocolSaver _protocolSaver;
     private string _inputText = "1 2 3 4\n2 4 6 8";
     private string _resultText = string.Empty;
     private string _status = string.Empty;
+    private string? _lastProtocol;
 
-    public RankViewModel(IRankCalculator rankCalculator)
+    public RankViewModel(IRankCalculator rankCalculator, IProtocolSaver protocolSaver)
     {
         _rankCalculator = rankCalculator;
+        _protocolSaver = protocolSaver;
         ComputeCommand = new RelayCommand(Compute);
+        SaveProtocolCommand = new RelayCommand(SaveProtocol);
     }
+
+    public ICommand SaveProtocolCommand { get; }
 
     public string InputText
     {
@@ -57,17 +63,48 @@ public class RankViewModel : ViewModelBase
             if (matrix == null)
             {
                 Status = "Invalid matrix format. Use rows separated by newlines, numbers by space.";
+                _lastProtocol = null;
                 return;
             }
             var rank = _rankCalculator.Calculate(matrix);
             ResultText = "Rank = " + rank;
+            _lastProtocol = BuildProtocol(matrix, rank);
             Status = "Done.";
+            CommandManager.InvalidateRequerySuggested();
         }
         catch (Exception ex)
         {
             Status = "Error: " + ex.Message;
             ResultText = string.Empty;
+            _lastProtocol = null;
         }
+    }
+
+    private static string BuildProtocol(double[,] matrix, int rank)
+    {
+        var culture = CultureInfo.GetCultureInfo("uk-UA");
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("Протокол обчислення рангу матриці:");
+        sb.AppendLine("Вхідна матриця:");
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            var row = new List<string>();
+            for (int j = 0; j < matrix.GetLength(1); j++)
+                row.Add(matrix[i, j].ToString("F2", culture));
+            sb.AppendLine(string.Join("  ", row));
+        }
+        sb.AppendLine();
+        sb.AppendLine("Ранг = " + rank);
+        return sb.ToString();
+    }
+
+    private void SaveProtocol()
+    {
+        var content = string.IsNullOrEmpty(_lastProtocol)
+            ? "=== Ранг матриці ===\r\n\r\nНемає протоколу. Натисніть «Run Computation»."
+            : "=== Ранг матриці ===\r\n\r\n" + _lastProtocol;
+        _protocolSaver.Save(content);
+        Status = "Protocol saved to protocol.txt";
     }
 
     private static double[,]? ParseMatrix(string text)

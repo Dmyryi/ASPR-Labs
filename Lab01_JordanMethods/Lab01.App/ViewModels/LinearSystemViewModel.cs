@@ -8,17 +8,19 @@ namespace Lab01.App.ViewModels;
 public class LinearSystemViewModel : ViewModelBase
 {
     private readonly IJordan _jordan;
+    private readonly IProtocolSaver _protocolSaver;
     private string _matrixText = "5 -3 7\n-1 4 3\n6 -2 5";
     private string _vectorText = "13 13 12";
     private string _resultText = string.Empty;
     private string _status = string.Empty;
-    private CalculationLogger? _lastLogger;
+    private string? _lastProtocol;
 
-    public LinearSystemViewModel(IJordan jordan)
+    public LinearSystemViewModel(IJordan jordan, IProtocolSaver protocolSaver)
     {
         _jordan = jordan;
+        _protocolSaver = protocolSaver;
         ComputeCommand = new RelayCommand(Compute);
-        SaveProtocolCommand = new RelayCommand(SaveProtocol, () => _lastLogger != null);
+        SaveProtocolCommand = new RelayCommand(SaveProtocol);
     }
 
     public ICommand SaveProtocolCommand { get; }
@@ -85,7 +87,7 @@ public class LinearSystemViewModel : ViewModelBase
             var inverter = new MatrixInverter(_jordan, logger);
             var solver = new InverseSolveStrategy(inverter, logger);
             var result = solver.Solve(matrix, vector);
-            _lastLogger = logger;
+            _lastProtocol = logger.GetText();
             CommandManager.InvalidateRequerySuggested();
             ResultText = string.Join(", ", result.Select(x => x.ToString("F2", CultureInfo.InvariantCulture)));
             Status = "Done.";
@@ -132,7 +134,10 @@ public class LinearSystemViewModel : ViewModelBase
 
     private void SaveProtocol()
     {
-        _lastLogger?.Save("protocol.txt");
+        var content = string.IsNullOrEmpty(_lastProtocol)
+            ? "=== СЛАР (метод оберненої матриці) ===\r\n\r\nНемає протоколу. Натисніть «Run»."
+            : "=== СЛАР (метод оберненої матриці) ===\r\n\r\n" + _lastProtocol;
+        _protocolSaver.Save(content);
         Status = "Protocol saved to protocol.txt";
     }
 }

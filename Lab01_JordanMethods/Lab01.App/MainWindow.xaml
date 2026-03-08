@@ -15,13 +15,13 @@
         <ImageBrush x:Key="WindowBackground" ImageSource="/Lab01.App;component/wmremove-transformed.png"
                     Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
         <DataTemplate DataType="{x:Type vm:InverseMatrixViewModel}">
-            <views:InverseMatrixView/>
+            <views:InverseMatrixView DataContext="{Binding}"/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:RankViewModel}">
-            <views:RankView/>
+            <views:RankView DataContext="{Binding}"/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:LinearSystemViewModel}">
-            <views:LinearSystemView/>
+            <views:LinearSystemView DataContext="{Binding}"/>
         </DataTemplate>
         <!-- Sidebar: transparent, active icon with glow -->
         <Style x:Key="SidebarItem" TargetType="Button">
