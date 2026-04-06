@@ -1,6 +1,8 @@
 using System.Windows;
 using Lab01.Logic;
+using Lab01.Logic.BasicLogic;
 using Lab01.Logic.Interfaces;
+using Lab01.Logic.Interfaces.IBasicLogic;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lab01.App;

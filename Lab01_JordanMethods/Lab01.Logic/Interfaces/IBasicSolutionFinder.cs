@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Lab01.Logic.Interfaces
 {
-    public interface IRankCalculator
+    public interface IBasicSolutionFinder
     {
-        public int Calculate(double[,] matrix);
+        void Find(SimplexTableau tableau);
     }
 }

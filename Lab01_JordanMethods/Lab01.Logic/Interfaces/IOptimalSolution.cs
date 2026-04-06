@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Lab01.Logic.Interfaces
 {
-    public interface IMatrixInverter
+    public interface IOptimalSolution
     {
-
-        public double[,] Invert(double[,] matrix);
+        void Find(SimplexTableau tableau);
     }
 }

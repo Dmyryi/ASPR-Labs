@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Lab01.Logic.Interfaces;
+using Lab01.Logic.Interfaces.IBasicLogic;
 
-namespace Lab01.Logic
+namespace Lab01.Logic.BasicLogic
 {
    public class RankCalculator:IRankCalculator
     {

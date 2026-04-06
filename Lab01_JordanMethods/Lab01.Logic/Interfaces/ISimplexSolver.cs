@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Lab01.Logic.Interfaces
 {
-    public interface IJordan
+    public interface ISimplexSolver
     {
-        double[,] JordanMethod(double[,] matrix, int r, int s);
-        double[,] ModifiedJordanMethod(double[,] matrix, int r, int s);
 
     }
 }

@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Windows.Input;
 using Lab01.Logic.Interfaces;
+using Lab01.Logic.Interfaces.IBasicLogic;
 
 namespace Lab01.App.ViewModels;
 

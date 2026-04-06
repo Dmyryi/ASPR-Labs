@@ -1,5 +1,6 @@
 using Lab01.Logic;
-using Lab01.Logic.Interfaces;
+using Lab01.Logic.BasicLogic;
+using Lab01.Logic.Interfaces.IBasicLogic;
 
 namespace Lab01.Tests;
 
