@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Lab01.Logic.Interfaces;
 using Lab01.Logic.Models;
 
@@ -10,7 +6,7 @@ namespace Lab01.Logic.Simplex
 {
     public class SimplexContext
     {
-        private ILinearSolver solver;
+        private ILinearSolver? solver;
 
         public SimplexContext() { }
 
@@ -24,7 +20,10 @@ namespace Lab01.Logic.Simplex
         public SolverResult ExecuteStrategy(double[] z, double[,] a, double[] b)
         {
             if (solver == null)
-                throw new Exception("Солвер не встановлено! Виберіть стратегію (Min або Max).");
+            {
+                throw new InvalidOperationException(
+                    "Солвер не встановлено. Спершу оберіть стратегію (Min або Max).");
+            }
 
             return solver.Solve(z, a, b);
         }

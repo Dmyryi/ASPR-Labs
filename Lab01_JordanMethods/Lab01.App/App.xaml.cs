@@ -21,6 +21,7 @@ public partial class App : Application
         services.AddTransient<ViewModels.InverseMatrixViewModel>();
         services.AddTransient<ViewModels.RankViewModel>();
         services.AddTransient<ViewModels.LinearSystemViewModel>();
+        services.AddTransient<ViewModels.SimplexViewModel>();
         services.AddTransient<ViewModels.MainViewModel>();
 
 

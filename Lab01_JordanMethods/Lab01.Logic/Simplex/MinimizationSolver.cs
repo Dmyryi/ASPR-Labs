@@ -8,11 +8,13 @@ namespace Lab01.Logic.Simplex
     {
         private readonly IBasicSolutionFinder _basicFinder;
         private readonly IOptimalSolution _optimalFinder;
+        private readonly ISimplexProtocol? _protocol;
 
-        public MinimizationSolver(IBasicSolutionFinder b, IOptimalSolution o)
+        public MinimizationSolver(IBasicSolutionFinder b, IOptimalSolution o, ISimplexProtocol? protocol = null)
         {
             _basicFinder = b;
             _optimalFinder = o;
+            _protocol = protocol;
         }
 
         public SolverResult Solve(double[] vectorZ, double[,] matrixA, double[] vectorB)
@@ -24,17 +26,16 @@ namespace Lab01.Logic.Simplex
 
             _basicFinder.Find(tableau);
 
+            _protocol?.LogBasicSolution(tableau);
             _optimalFinder.Find(tableau);
 
             double[] fullResults = GetResults(tableau);
             double maxZPrime = fullResults.Last();
 
-            double finalMinZ = -maxZPrime;
-
             return new SolverResult
             {
                 X = fullResults.Take(tableau.ColsCount).ToArray(),
-                Z = finalMinZ,
+                Z = maxZPrime,
                 Success = true
             };
         }
@@ -42,10 +43,13 @@ namespace Lab01.Logic.Simplex
         private double[] GetResults(SimplexTableau tableau)
         {
             double[] results = new double[tableau.ColsCount + 1];
-            for (int i = 0; i < tableau.RowsCount; i++)
+
+            for (int row = 0; row < tableau.RowsCount; row++)
             {
-                if (i < tableau.ColsCount)
-                    results[i] = tableau.GetB(i);
+                int basisColumn = tableau.BasisVariables[row];
+
+                if (basisColumn >= 0 && basisColumn < tableau.ColsCount)
+                    results[basisColumn] = tableau.GetB(row);
             }
 
             results[tableau.ColsCount] = tableau.Data[tableau.RowsCount, tableau.ColsCount];

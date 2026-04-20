@@ -1,42 +1,68 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using Lab01.Logic.Interfaces;
+using Lab01.Logic.Models;
 
 namespace Lab01.Logic.Simplex
 {
-   public class BasicSolutionFinder:IBasicSolutionFinder
+    public class BasicSolutionFinder : IBasicSolutionFinder
     {
-
         private readonly IJordan _jordan;
-        public BasicSolutionFinder(IJordan jordan) { 
-        _jordan = jordan;
-        
+        private readonly ISimplexProtocol? _protocol;
+
+        public BasicSolutionFinder(IJordan jordan, ISimplexProtocol? protocol = null)
+        {
+            _jordan = jordan;
+            _protocol = protocol;
         }
 
         public void Find(SimplexTableau tableau)
         {
-         
+       
+            int step = 1;
+
+            _protocol?.LogInitialTableau(tableau);
+            _protocol?.LogSection("Пошук опорного розв’язку:");
+
             while (true)
             {
-                int row = FindNegativeB(tableau);
-                if (row == -1) break;
-                int col = FindNegativeInRow(tableau, row);
-                if (col == -1) throw new Exception("Infeasible");
+                
 
-                int actualPivot = FindPivotRow(tableau, col, row);
-                var nextData = _jordan.ModifiedJordanMethod(tableau.Data, actualPivot, col);
+                int row = FindNegativeB(tableau);
+                if (row == -1)
+                {
+                    
+                    break;
+                }
+
+                
+
+                int col = FindNegativeInRow(tableau, row);
+                if (col == -1)
+                {
+                    throw new Exception("Infeasible");
+                }
+
+                int actualPivotRow = FindPivotRow(tableau, col, row);
+                
+
+                
+                _protocol?.LogPivot(step, tableau, actualPivotRow, col);
+                tableau.SetBasisColumn(actualPivotRow, col);
+                var nextData = _jordan.ModifiedJordanMethod(tableau.Data, actualPivotRow, col);
                 tableau.Update(nextData);
+                _protocol?.LogTableau(tableau);
+
+                step++;
             }
+            
         }
 
         private int FindNegativeB(SimplexTableau tableau)
         {
             for (int i = 0; i < tableau.RowsCount; i++)
             {
-                if (tableau.GetB(i) < 0) return i;
+                if (tableau.GetB(i) < -1e-9) return i;
             }
             return -1;
         }
@@ -45,7 +71,7 @@ namespace Lab01.Logic.Simplex
         {
             for (int j = 0; j < tableau.ColsCount; j++)
             {
-                if (tableau.GetValue(pivotRow, j) < 0) return j;
+                if (tableau.GetValue(pivotRow, j) < -1e-9) return j;
             }
             return -1;
         }
@@ -55,13 +81,14 @@ namespace Lab01.Logic.Simplex
             int actualPivot = -1;
             double minRatio = double.MaxValue;
 
+           
             for (int r = 0; r < tableau.RowsCount; r++)
             {
                 double valInCol = tableau.GetValue(r, pivotCol);
-
-                if (Math.Abs(valInCol) > 0)
+                if (valInCol < 0)
                 {
                     double ratio = tableau.GetB(r) / valInCol;
+                 
 
                     if (ratio >= 0 && ratio < minRatio)
                     {
@@ -73,5 +100,7 @@ namespace Lab01.Logic.Simplex
 
             return actualPivot == -1 ? initialRow : actualPivot;
         }
+
+      
     }
 }

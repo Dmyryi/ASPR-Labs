@@ -1,14 +1,19 @@
 ﻿using Lab01.Logic.Interfaces;
 using Lab01.Logic.Models;
+using System;
+using System.Linq;
 
 public class MaximizationSolver : ILinearSolver
 {
     private readonly IBasicSolutionFinder _basicFinder;
     private readonly IOptimalSolution _optimalFinder;
+    private readonly ISimplexProtocol? _protocol;
 
-    public MaximizationSolver(IBasicSolutionFinder b, IOptimalSolution o)
+    public MaximizationSolver(IBasicSolutionFinder b, IOptimalSolution o, ISimplexProtocol? protocol = null)
     {
-        _basicFinder = b; _optimalFinder = o;
+        _basicFinder = b;
+        _optimalFinder = o;
+        _protocol = protocol;
     }
 
     public SolverResult Solve(double[] vectorZ, double[,] matrixA, double[] vectorB)
@@ -16,6 +21,7 @@ public class MaximizationSolver : ILinearSolver
         var tableau = new SimplexTableau(matrixA, vectorB, vectorZ);
 
         _basicFinder.Find(tableau);
+        _protocol?.LogBasicSolution(tableau);
         _optimalFinder.Find(tableau);
 
         double[] fullResults = GetResults(tableau);
@@ -28,15 +34,18 @@ public class MaximizationSolver : ILinearSolver
         };
     }
 
-
     public double[] GetResults(SimplexTableau tableau)
     {
         double[] results = new double[tableau.ColsCount + 1];
 
-        for (int i = 0; i < tableau.RowsCount; i++)
+        for (int row = 0; row < tableau.RowsCount; row++)
         {
-            if (i < tableau.ColsCount)
-                results[i] = tableau.GetB(i);
+            int varIndex = tableau.BasisVariables[row];
+
+            if (varIndex >= 0 && varIndex < tableau.ColsCount)
+            {
+                results[varIndex] = tableau.GetB(row);
+            }
         }
 
         results[tableau.ColsCount] = tableau.Data[tableau.RowsCount, tableau.ColsCount];
