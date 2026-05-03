@@ -34,25 +34,42 @@ namespace Lab01.Logic.Simplex
 
             return new SolverResult
             {
-                X = fullResults.Take(tableau.ColsCount).ToArray(),
+                X = fullResults.Take(tableau.ProblemVariableCount).ToArray(),
+                Y = ExtractSlackValues(tableau),
                 Z = maxZPrime,
                 Success = true
             };
         }
 
+        private static double[] ExtractSlackValues(SimplexTableau tableau)
+        {
+            int slackCount = tableau.RowsCount;
+            var y = new double[slackCount];
+
+            for (int row = 0; row < tableau.RowsCount; row++)
+            {
+                int varIndex = tableau.BasisVariables[row];
+                int slackIndex = varIndex - tableau.ProblemVariableCount;
+                if (slackIndex >= 0 && slackIndex < slackCount)
+                    y[slackIndex] = tableau.GetB(row);
+            }
+
+            return y;
+        }
+
         private double[] GetResults(SimplexTableau tableau)
         {
-            double[] results = new double[tableau.ColsCount + 1];
+            double[] results = new double[tableau.ProblemVariableCount + 1];
 
             for (int row = 0; row < tableau.RowsCount; row++)
             {
                 int basisColumn = tableau.BasisVariables[row];
 
-                if (basisColumn >= 0 && basisColumn < tableau.ColsCount)
+                if (basisColumn >= 0 && basisColumn < tableau.ProblemVariableCount)
                     results[basisColumn] = tableau.GetB(row);
             }
 
-            results[tableau.ColsCount] = tableau.Data[tableau.RowsCount, tableau.ColsCount];
+            results[tableau.ProblemVariableCount] = tableau.Data[tableau.RowsCount, tableau.ColsCount];
             return results;
         }
     }

@@ -1,6 +1,9 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Lab01.Logic;
 using Lab01.Logic.Interfaces;
 using Lab01.Logic.Models;
@@ -17,6 +20,7 @@ public class SimplexViewModel : ViewModelBase
     private string _resultText = string.Empty;
     private string _status = string.Empty;
     private string? _lastProtocol;
+    private bool _useZeroRowElimination = true;
     private const string Example1Objective = "10x1 - x2 - 42x3 - 52x4";
     private const string Example1Constraints =
         "-2x1 + x2 + x3 + 3x4 = 2\n" +
@@ -30,16 +34,18 @@ public class SimplexViewModel : ViewModelBase
         "x1 - x2 + 1 >= 0\n" +
         "x1 - 4x2 + 13 >= 0\n" +
         "-4x1 + x2 + 23 >= 0";
+    private readonly IFindPivot _findPivot;
 
     public SimplexViewModel(IJordan jordan, IProtocolSaver protocolSaver)
     {
         _jordan = jordan;
         _protocolSaver = protocolSaver;
-        SolveMaxCommand = new RelayCommand(() => Solve(OptimizationMode.Maximization));
-        SolveMinCommand = new RelayCommand(() => Solve(OptimizationMode.Minimization));
+        SolveMaxCommand = new RelayCommand(() => SolveAsync(OptimizationMode.Maximization));
+        SolveMinCommand = new RelayCommand(() => SolveAsync(OptimizationMode.Minimization));
         LoadExample1Command = new RelayCommand(LoadExample1);
         LoadExample2Command = new RelayCommand(LoadExample2);
         SaveProtocolCommand = new RelayCommand(SaveProtocol);
+        _findPivot = new OptimalSolutionFinderBase();
     }
 
     public ICommand SolveMaxCommand { get; }
@@ -47,6 +53,16 @@ public class SimplexViewModel : ViewModelBase
     public ICommand LoadExample1Command { get; }
     public ICommand LoadExample2Command { get; }
     public ICommand SaveProtocolCommand { get; }
+
+    public bool UseZeroRowElimination
+    {
+        get => _useZeroRowElimination;
+        set
+        {
+            _useZeroRowElimination = value;
+            OnPropertyChanged();
+        }
+    }
 
     public string ObjectiveText
     {
@@ -88,70 +104,105 @@ public class SimplexViewModel : ViewModelBase
         }
     }
 
-    private void Solve(OptimizationMode mode)
+    private async void SolveAsync(OptimizationMode mode)
     {
-        try
+        static void ApplyUi(SimplexViewModel vm, SolverResult result, SimplexProtocol protocol, OptimizationMode m)
         {
-            var objective = ParseLinearExpression(ObjectiveText);
-            var parsedConstraints = ParseConstraints(ConstraintsText);
-            if (parsedConstraints.Count == 0)
-            {
-                throw new InvalidOperationException("Add at least one constraint.");
-            }
-
-            int variablesCount = Math.Max(
-                objective.Keys.DefaultIfEmpty(0).Max(),
-                parsedConstraints.SelectMany(c => c.Coefficients.Keys).DefaultIfEmpty(0).Max());
-
-            if (variablesCount <= 0)
-            {
-                throw new InvalidOperationException("Cannot detect variables. Use x1, x2, ... format.");
-            }
-
-            double[] vectorZ = BuildObjectiveVector(objective, variablesCount, mode);
-            double[,] matrixA = new double[parsedConstraints.Count, variablesCount];
-            double[] vectorB = new double[parsedConstraints.Count];
-
-            for (int i = 0; i < parsedConstraints.Count; i++)
-            {
-                var constraint = parsedConstraints[i];
-                int sign = constraint.Operator == ">=" ? -1 : 1;
-
-                foreach (var (index, value) in constraint.Coefficients)
-                {
-                    matrixA[i, index - 1] = sign * value;
-                }
-
-                vectorB[i] = sign * constraint.RightSide;
-            }
-
-            var protocol = new SimplexProtocol();
-            protocol.Start(mode, ObjectiveText, ConstraintsText);
-
-            var basicFinder = new BasicSolutionFinder(_jordan, protocol);
-            var optimalFinder = new OptimalSolutionFinder(_jordan, mode, protocol);
-            ILinearSolver solver = mode == OptimizationMode.Maximization
-                ? new MaximizationSolver(basicFinder, optimalFinder, protocol)
-                : new MinimizationSolver(basicFinder, optimalFinder, protocol);
-
-            var context = new SimplexContext();
-            context.SetStrategy(solver);
-            SolverResult result = context.ExecuteStrategy(vectorZ, matrixA, vectorB);
-
-            ResultText = FormatResult(result);
+            vm.ResultText = FormatResult(result);
             protocol.LogResult(result);
-            _lastProtocol = protocol.GetText();
-            Status = mode == OptimizationMode.Maximization
+            vm._lastProtocol = protocol.GetText();
+            vm.Status = m == OptimizationMode.Maximization
                 ? "Maximization solved."
                 : "Minimization solved.";
         }
-        catch (Exception ex)
+
+        void ApplyError(string message)
         {
-            Status = "Error: " + ex.Message;
+            Status = "Error: " + message;
             ResultText = string.Empty;
             _lastProtocol = null;
         }
+
+        try
+        {
+            Status = "Обчислення… (інтерфейс не блокується)";
+            Dispatcher? ui = Application.Current?.Dispatcher;
+
+            // Знімаємо знімок полів із UI перед фоном, щоб не змішувати з середнім редагуванням тексту користувачем.
+            string objectiveSnapshot = ObjectiveText;
+            string constraintsSnapshot = ConstraintsText;
+            bool zeroElimSnapshot = _useZeroRowElimination;
+
+            // Важкий симплекс офф-потоку інакше вікно WPF «вішається» під час довгої фази 0-рядків або оптимуму.
+            OptimizationMode modeSnap = mode;
+            SimplexSolvePayload payload = await Task.Run(() =>
+            {
+                var objective = ParseLinearExpression(objectiveSnapshot);
+                var parsedConstraints = ParseConstraints(constraintsSnapshot);
+                if (parsedConstraints.Count == 0)
+                    throw new InvalidOperationException("Add at least one constraint.");
+
+                int variablesCount = Math.Max(
+                    objective.Keys.DefaultIfEmpty(0).Max(),
+                    parsedConstraints.SelectMany(c => c.Coefficients.Keys).DefaultIfEmpty(0).Max());
+
+                if (variablesCount <= 0)
+                    throw new InvalidOperationException("Cannot detect variables. Use x1, x2, ... format.");
+
+                double[] vectorZ = BuildObjectiveVector(objective, variablesCount, modeSnap);
+                double[,] matrixA = new double[parsedConstraints.Count, variablesCount];
+                double[] vectorB = new double[parsedConstraints.Count];
+
+                for (int i = 0; i < parsedConstraints.Count; i++)
+                {
+                    var constraint = parsedConstraints[i];
+                    int sign = constraint.Operator == ">=" ? -1 : 1;
+
+                    foreach (var (index, value) in constraint.Coefficients)
+                    {
+                        matrixA[i, index - 1] = sign * value;
+                    }
+
+                    vectorB[i] = sign * constraint.RightSide;
+                }
+
+                var protocol = new SimplexProtocol();
+                protocol.Start(modeSnap, objectiveSnapshot, constraintsSnapshot);
+
+                var basicFinder = new BasicSolutionFinder(_jordan, protocol);
+                var optimalFinder = new OptimalSolutionFinder(_jordan, _findPivot, modeSnap, protocol);
+                var zeroRowEliminator = new ZeroRowElliminator(_jordan, _findPivot, protocol);
+                ILinearSolver solver = modeSnap == OptimizationMode.Maximization
+                    ? new MaximizationSolver(basicFinder, optimalFinder, protocol, zeroRowEliminator,
+                        zeroElimSnapshot)
+                    : new MinimizationSolver(basicFinder, optimalFinder, protocol);
+
+                var context = new SimplexContext();
+                context.SetStrategy(solver);
+                SolverResult r = context.ExecuteStrategy(vectorZ, matrixA, vectorB);
+                return new SimplexSolvePayload(r, protocol);
+            }).ConfigureAwait(false);
+
+            if (ui is not null)
+            {
+                await ui.InvokeAsync(() => ApplyUi(this, payload.Result, payload.Protocol, modeSnap));
+            }
+            else
+            {
+                ApplyUi(this, payload.Result, payload.Protocol, modeSnap);
+            }
+        }
+        catch (Exception ex)
+        {
+            Dispatcher? ui = Application.Current?.Dispatcher;
+            if (ui is not null)
+                await ui.InvokeAsync(() => ApplyError(ex.Message));
+            else
+                ApplyError(ex.Message);
+        }
     }
+
+    private sealed record SimplexSolvePayload(SolverResult Result, SimplexProtocol Protocol);
 
     private void SaveProtocol()
     {
@@ -184,8 +235,10 @@ public class SimplexViewModel : ViewModelBase
     {
         var xRows = result.X
             .Select((x, i) => $"x{i + 1} = {x.ToString("F4", CultureInfo.InvariantCulture)}");
+        var yRows = (result.Y ?? Array.Empty<double>())
+            .Select((y, i) => $"y{i + 1} = {y.ToString("F4", CultureInfo.InvariantCulture)}");
         var zRow = $"Z = {result.Z.ToString("F4", CultureInfo.InvariantCulture)}";
-        return string.Join(Environment.NewLine, xRows.Append(zRow));
+        return string.Join(Environment.NewLine, xRows.Concat(yRows).Append(zRow));
     }
 
     private static double[] BuildObjectiveVector(
@@ -219,52 +272,75 @@ public class SimplexViewModel : ViewModelBase
             string op;
             string[] parts;
 
-            if (line.Contains("<="))
-            {
-                op = "<=";
-                parts = line.Split("<=", StringSplitOptions.TrimEntries);
-            }
-            else if (line.Contains("="))
-            {
-                op = "=";
-                parts = line.Split("=", StringSplitOptions.TrimEntries);
-            }
-            else if (line.Contains(">="))
-            {
-                op = ">=";
-                parts = line.Split(">=", StringSplitOptions.TrimEntries);
-            }
-            else
-            {
-                throw new FormatException($"Constraint '{line}' must contain <= or >=.");
-            }
+            if (line.Contains("<=")) { op = "<="; parts = line.Split("<=", StringSplitOptions.TrimEntries); }
+            else if (line.Contains(">=")) { op = ">="; parts = line.Split(">=", StringSplitOptions.TrimEntries); }
+            else if (line.Contains("=")) { op = "="; parts = line.Split("=", StringSplitOptions.TrimEntries); }
+            else throw new FormatException($"Обмеження '{line}' повинно містити <=, >= або =.");
 
-            if (parts.Length != 2)
-            {
-                throw new FormatException($"Invalid constraint format: '{line}'.");
-            }
+            if (parts.Length != 2) throw new FormatException($"Невірний формат: '{line}'.");
 
             if (!double.TryParse(parts[1], NumberStyles.Any, CultureInfo.InvariantCulture, out double rightSide))
-            {
-                throw new FormatException($"Invalid right side in constraint: '{line}'.");
-            }
+                throw new FormatException($"Невірне число справа: '{line}'.");
 
-            var coefficients = ParseLinearExpression(parts[0]);
+            // Викликаємо оновлений парсер, який повертає коефіцієнти ТА вільний член
+            var (coefficients, constant) = ParseLinearExpressionWithConstant(parts[0]);
+
+            // Переносимо константу вправо: ax + b >= c  => ax >= c - b
+            double adjustedRightSide = rightSide - constant;
 
             if (op == "=")
             {
-                result.Add(new ParsedConstraint(new Dictionary<int, double>(coefficients), "<=", rightSide));
-                result.Add(new ParsedConstraint(new Dictionary<int, double>(coefficients), ">=", rightSide));
+                result.Add(new ParsedConstraint(new Dictionary<int, double>(coefficients), "<=", adjustedRightSide));
+                result.Add(new ParsedConstraint(new Dictionary<int, double>(coefficients), ">=", adjustedRightSide));
             }
             else
             {
-                result.Add(new ParsedConstraint(coefficients, op, rightSide));
+                result.Add(new ParsedConstraint(coefficients, op, adjustedRightSide));
             }
         }
 
         return result;
     }
+    private static (Dictionary<int, double> coefficients, double constant) ParseLinearExpressionWithConstant(string expression)
+    {
+        string normalized = expression
+            .Replace(" ", string.Empty)
+            .Replace("*", string.Empty)
+            .Replace(",", ".");
 
+        var coefficients = new Dictionary<int, double>();
+        double constant = 0;
+
+        // 1. Шукаємо всі змінні (напр. -2x1, x2, +3.5x3)
+        var varRegex = new Regex(@"([+\-]?)(\d*(?:\.\d+)?)x(\d+)", RegexOptions.Compiled);
+        var matches = varRegex.Matches(normalized);
+
+        foreach (Match match in matches)
+        {
+            string signToken = match.Groups[1].Value;
+            string valueToken = match.Groups[2].Value;
+            int variableIndex = int.Parse(match.Groups[3].Value);
+
+            double val = string.IsNullOrEmpty(valueToken) ? 1.0 : double.Parse(valueToken, CultureInfo.InvariantCulture);
+            if (signToken == "-") val *= -1.0;
+
+            coefficients[variableIndex] = coefficients.GetValueOrDefault(variableIndex) + val;
+        }
+
+        // 2. Видаляємо змінні з рядка, щоб знайти вільні константи
+        string leftover = varRegex.Replace(normalized, "|");
+        // Використовуємо роздільник |, щоб числа не злилися (напр. "1-2" не стало "12")
+
+        var constRegex = new Regex(@"([+\-]?\d+(?:\.\d+)?)", RegexOptions.Compiled);
+        var constMatches = constRegex.Matches(leftover);
+
+        foreach (Match match in constMatches)
+        {
+            constant += double.Parse(match.Value, CultureInfo.InvariantCulture);
+        }
+
+        return (coefficients, constant);
+    }
     private static Dictionary<int, double> ParseLinearExpression(string expression)
     {
         string normalized = expression
@@ -306,7 +382,7 @@ public class SimplexViewModel : ViewModelBase
             coefficients[variableIndex] = coefficients.GetValueOrDefault(variableIndex) + value;
         }
 
-        string leftover = regex.Replace(normalized, string.Empty).Replace("+", string.Empty).Replace("-", string.Empty);
+        string leftover = regex.Replace(normalized, string.Empty).Replace("+", string.Empty).Replace("-", string.Empty).Replace(">", string.Empty).Replace("<", string.Empty).Replace("=", string.Empty);
         if (!string.IsNullOrEmpty(leftover))
         {
             throw new FormatException($"Unsupported expression part: '{leftover}'.");

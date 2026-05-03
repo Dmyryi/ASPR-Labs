@@ -1,18 +1,19 @@
-﻿using System;
-using Lab01.Logic.Interfaces;
+﻿using Lab01.Logic.Interfaces;
 using Lab01.Logic.Models;
 
 namespace Lab01.Logic.Simplex
 {
-    public class OptimalSolutionFinder : IOptimalSolution
+    public class OptimalSolutionFinder : OptimalSolutionFinderBase, IOptimalSolution
     {
         private readonly IJordan _jordan;
         private OptimizationMode _mode;
         private readonly ISimplexProtocol? _protocol;
+        private readonly IFindPivot _findPivot;
 
-        public OptimalSolutionFinder(IJordan jordan, OptimizationMode mode = OptimizationMode.Maximization, ISimplexProtocol? protocol = null)
+        public OptimalSolutionFinder(IJordan jordan, IFindPivot findPivot, OptimizationMode mode = OptimizationMode.Maximization, ISimplexProtocol? protocol = null)
         {
             _jordan = jordan;
+            _findPivot = findPivot;
             _mode = mode;
             _protocol = protocol;
         }
@@ -20,10 +21,11 @@ namespace Lab01.Logic.Simplex
         public void Find(SimplexTableau tableau)
         {
             int step = 1;
+            const int maxSteps = 500;
 
             _protocol?.LogSection("Пошук оптимального розв’язку:");
 
-            while (true)
+            while (step <= maxSteps)
             {
                 int col = FindPivotColumn(tableau);
                 if (col == -1)
@@ -31,13 +33,19 @@ namespace Lab01.Logic.Simplex
                     break;
                 }
 
-                int row = FindPivotRow(tableau, col);
+                int row = _findPivot.FindPivotRow(tableau, col);
                 if (row == -1)
                 {
                     string errorMsg = _mode == OptimizationMode.Maximization
                         ? "Функція не обмежена зверху"
                         : "Функція не обмежена знизу";
+
+                    System.Diagnostics.Debug.WriteLine($"CRITICAL: PivotCol {col} is unbounded!");
+                    for (int i = 0; i < tableau.RowsCount; i++)
+                        System.Diagnostics.Debug.WriteLine($"Row {i}, Val: {tableau.GetValue(i, col)}");
+
                     throw new Exception(errorMsg);
+                   
                 }
 
                 _protocol?.LogPivot(step, tableau, row, col);
@@ -47,6 +55,11 @@ namespace Lab01.Logic.Simplex
                 _protocol?.LogTableau(tableau);
 
                 step++;
+            }
+
+            if (step > maxSteps)
+            {
+                throw new InvalidOperationException("Перевищено ліміт ітерацій під час пошуку оптимального розв’язку.");
             }
         }
 
@@ -59,7 +72,7 @@ namespace Lab01.Logic.Simplex
             {
                 double zValue = tableau.GetZ(j);
 
-                // Для максимизации ищем самый отрицательный элемент (правило Бланда или просто минимальный)
+               
                 if (_mode == OptimizationMode.Maximization)
                 {
                     if (zValue < bestValue)
@@ -68,7 +81,7 @@ namespace Lab01.Logic.Simplex
                         bestCol = j;
                     }
                 }
-                else // Для минимизации ищем самый положительный
+                else
                 {
                     if (zValue > bestValue)
                     {
@@ -79,30 +92,5 @@ namespace Lab01.Logic.Simplex
             }
             return bestCol;
         }
-
-        private int FindPivotRow(SimplexTableau tableau, int pivotCol)
-        {
-            int pivotRow = -1;
-            double minRatio = double.MaxValue;
-
-            Console.WriteLine($"  Calculating ratios for column {pivotCol}:");
-            for (int i = 0; i < tableau.RowsCount; i++)
-            {
-                double val = tableau.GetValue(i, pivotCol);
-                if (val > 0) // В основной фазе ищем только положительные элементы
-                {
-                    double ratio = tableau.GetB(i) / val;
-                    Console.WriteLine($"    Row {i}: Ratio = {ratio:F4} ({tableau.GetB(i):F2} / {val:F2})");
-
-                    if (ratio < minRatio)
-                    {
-                        minRatio = ratio;
-                        pivotRow = i;
-                    }
-                }
-            }
-            return pivotRow;
-        }
-
     }
 }

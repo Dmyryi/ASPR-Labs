@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Lab01.Logic.Interfaces;
 using Lab01.Logic.Models;
@@ -20,11 +21,13 @@ namespace Lab01.Logic.Simplex
         {
        
             int step = 1;
+            const int maxSteps = 500;
+            var seenStates = new HashSet<string>(StringComparer.Ordinal);
 
             _protocol?.LogInitialTableau(tableau);
             _protocol?.LogSection("Пошук опорного розв’язку:");
 
-            while (true)
+            while (step <= maxSteps)
             {
                 
 
@@ -44,9 +47,13 @@ namespace Lab01.Logic.Simplex
                 }
 
                 int actualPivotRow = FindPivotRow(tableau, col, row);
-                
 
-                
+                string state = BuildStateKey(tableau, row, col, actualPivotRow);
+                if (!seenStates.Add(state))
+                {
+                    throw new InvalidOperationException("Зациклення під час пошуку опорного розв’язку.");
+                }
+
                 _protocol?.LogPivot(step, tableau, actualPivotRow, col);
                 tableau.SetBasisColumn(actualPivotRow, col);
                 var nextData = _jordan.ModifiedJordanMethod(tableau.Data, actualPivotRow, col);
@@ -55,7 +62,21 @@ namespace Lab01.Logic.Simplex
 
                 step++;
             }
-            
+
+            if (step > maxSteps)
+            {
+                throw new InvalidOperationException("Перевищено ліміт ітерацій під час пошуку опорного розв’язку.");
+            }
+        }
+
+        private static string BuildStateKey(SimplexTableau tableau, int negativeRow, int pivotCol, int pivotRow)
+        {
+            return string.Join(
+                "|",
+                negativeRow.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                pivotCol.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                pivotRow.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                string.Join(",", tableau.BasisVariables));
         }
 
         private int FindNegativeB(SimplexTableau tableau)
@@ -81,15 +102,12 @@ namespace Lab01.Logic.Simplex
             int actualPivot = -1;
             double minRatio = double.MaxValue;
 
-           
             for (int r = 0; r < tableau.RowsCount; r++)
             {
-                double valInCol = tableau.GetValue(r, pivotCol);
-                if (valInCol < 0)
+                double a = tableau.GetValue(r, pivotCol);
+                if (a < -1e-9)
                 {
-                    double ratio = tableau.GetB(r) / valInCol;
-                 
-
+                    double ratio = tableau.GetB(r) / a;
                     if (ratio >= 0 && ratio < minRatio)
                     {
                         minRatio = ratio;

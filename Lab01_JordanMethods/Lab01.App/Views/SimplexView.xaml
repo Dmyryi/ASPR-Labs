@@ -81,6 +81,12 @@
                     <StackPanel Margin="0,8,0,0" VerticalAlignment="Stretch">
                         <Border Style="{StaticResource SmallCard}" Margin="0,0,0,16">
                             <StackPanel>
+                                <TextBlock Text="Options" Style="{StaticResource SectionHeader}"/>
+                                <CheckBox IsChecked="{Binding UseZeroRowElimination}" 
+                                         Content="Use zero row elimination" 
+                                         Foreground="#FFF2F2F5" 
+                                         Margin="0,0,0,12"
+                                         FontSize="13"/>
                                 <TextBlock Text="Actions" Style="{StaticResource SectionHeader}"/>
                                 <Button Command="{Binding SolveMaxCommand}" Style="{StaticResource ActionButton}"
                                         HorizontalAlignment="Stretch" Margin="0,0,0,8">

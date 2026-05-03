@@ -10,7 +10,8 @@ namespace Lab01.Logic.Models
     {
       
             public double Z { get; set; }        
-            public double[] X { get; set; }     
+            public double[] X { get; set; }
+            public double[] Y { get; set; } = Array.Empty<double>();
             public bool Success { get; set; }    
             public string Message { get; set; } 
         
