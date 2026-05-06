@@ -17,19 +17,14 @@ public class SimplexViewModel : ViewModelBase
     private string _resultText = string.Empty;
     private string _status = string.Empty;
     private string? _lastProtocol;
-    private const string Example1Objective = "10x1 - x2 - 42x3 - 52x4";
-    private const string Example1Constraints =
-        "-2x1 + x2 + x3 + 3x4 = 2\n" +
-        "-3x1 + 2x2 - 3x3 = 7\n" +
-        "-3x1 + x2 + 4x3 + x4 <= 1\n" +
-        "-3x1 + 2x2 - 2x3 + 2x4 >= 9";
-    private const string Example2Objective = "-3x1 + 6x2";
-    private const string Example2Constraints =
-        "x1 + 2x2 + 1 >= 0\n" +
-        "2x1 + x2 - 4 >= 0\n" +
-        "x1 - x2 + 1 >= 0\n" +
-        "x1 - 4x2 + 13 >= 0\n" +
-        "-4x1 + x2 + 23 >= 0";
+
+    private const string ExampleSharedConstraints =
+        "x1 + x2 - x3 - 2x4 <= 6\n" +
+        "x1 + x2 + x3 - x4 >= 5\n" +
+        "2x1 - x2 + 3x3 + 4x4 <= 10";
+
+    private const string ExampleMaxObjective = "x1 + 2x2 - x3 - x4";
+    private const string ExampleMinObjective = "-2x1 + 3x2 - 3x4";
 
     public SimplexViewModel(IJordan jordan, IProtocolSaver protocolSaver)
     {
@@ -37,15 +32,15 @@ public class SimplexViewModel : ViewModelBase
         _protocolSaver = protocolSaver;
         SolveMaxCommand = new RelayCommand(() => Solve(OptimizationMode.Maximization));
         SolveMinCommand = new RelayCommand(() => Solve(OptimizationMode.Minimization));
-        LoadExample1Command = new RelayCommand(LoadExample1);
-        LoadExample2Command = new RelayCommand(LoadExample2);
+        LoadExampleMaxCommand = new RelayCommand(LoadExampleMax);
+        LoadExampleMinCommand = new RelayCommand(LoadExampleMin);
         SaveProtocolCommand = new RelayCommand(SaveProtocol);
     }
 
     public ICommand SolveMaxCommand { get; }
     public ICommand SolveMinCommand { get; }
-    public ICommand LoadExample1Command { get; }
-    public ICommand LoadExample2Command { get; }
+    public ICommand LoadExampleMaxCommand { get; }
+    public ICommand LoadExampleMinCommand { get; }
     public ICommand SaveProtocolCommand { get; }
 
     public string ObjectiveText
@@ -162,21 +157,21 @@ public class SimplexViewModel : ViewModelBase
         Status = "Protocol saved to protocol.txt";
     }
 
-    private void LoadExample1()
+    private void LoadExampleMax()
     {
-        ObjectiveText = Example1Objective;
-        ConstraintsText = Example1Constraints;
+        ObjectiveText = ExampleMaxObjective;
+        ConstraintsText = ExampleSharedConstraints;
         ResultText = string.Empty;
-        Status = "Loaded test example 1.";
+        Status = "Loaded max example.";
         _lastProtocol = null;
     }
 
-    private void LoadExample2()
+    private void LoadExampleMin()
     {
-        ObjectiveText = Example2Objective;
-        ConstraintsText = Example2Constraints;
+        ObjectiveText = ExampleMinObjective;
+        ConstraintsText = ExampleSharedConstraints;
         ResultText = string.Empty;
-        Status = "Loaded test example 2.";
+        Status = "Loaded min example.";
         _lastProtocol = null;
     }
 
@@ -224,15 +219,15 @@ public class SimplexViewModel : ViewModelBase
                 op = "<=";
                 parts = line.Split("<=", StringSplitOptions.TrimEntries);
             }
-            else if (line.Contains("="))
-            {
-                op = "=";
-                parts = line.Split("=", StringSplitOptions.TrimEntries);
-            }
             else if (line.Contains(">="))
             {
                 op = ">=";
                 parts = line.Split(">=", StringSplitOptions.TrimEntries);
+            }
+            else if (line.Contains("="))
+            {
+                op = "=";
+                parts = line.Split("=", StringSplitOptions.TrimEntries);
             }
             else
             {

@@ -54,11 +54,11 @@
                                         <ColumnDefinition Width="8"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Button Grid.Column="0" Command="{Binding LoadExample1Command}" Style="{StaticResource SecondaryButton}" Padding="10,8">
-                                        <TextBlock Text="Load example 1" FontSize="12"/>
+                                    <Button Grid.Column="0" Command="{Binding LoadExampleMaxCommand}" Style="{StaticResource SecondaryButton}" Padding="10,8">
+                                        <TextBlock Text="Load max example" FontSize="12"/>
                                     </Button>
-                                    <Button Grid.Column="2" Command="{Binding LoadExample2Command}" Style="{StaticResource SecondaryButton}" Padding="10,8">
-                                        <TextBlock Text="Load example 2" FontSize="12"/>
+                                    <Button Grid.Column="2" Command="{Binding LoadExampleMinCommand}" Style="{StaticResource SecondaryButton}" Padding="10,8">
+                                        <TextBlock Text="Load min example" FontSize="12"/>
                                     </Button>
                                 </Grid>
                             </Border>
