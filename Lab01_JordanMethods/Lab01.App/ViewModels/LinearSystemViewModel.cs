@@ -76,12 +76,16 @@ public class LinearSystemViewModel : ViewModelBase
             var vector = ParseVector(VectorText);
             if (matrix == null || vector == null)
             {
-                Status = "Invalid format. Matrix: rows by newline, numbers by space. Vector: numbers by space.";
+                const string msg = "Invalid format. Matrix: rows by newline, numbers by space. Vector: numbers by space.";
+                Status = "Помилка.";
+                ResultText = "Помилка:\n\n" + msg;
                 return;
             }
             if (matrix.GetLength(0) != vector.Length)
             {
-                Status = "Matrix rows must match vector length.";
+                const string msg = "Matrix rows must match vector length.";
+                Status = "Помилка.";
+                ResultText = "Помилка:\n\n" + msg;
                 return;
             }
             var logger = new CalculationLogger();
@@ -95,8 +99,8 @@ public class LinearSystemViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Status = "Error: " + ex.Message;
-            ResultText = string.Empty;
+            Status = "Помилка.";
+            ResultText = "Помилка обчислення:\n\n" + ex.Message;
         }
     }
 

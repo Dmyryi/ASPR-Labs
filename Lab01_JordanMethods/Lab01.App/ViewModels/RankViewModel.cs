@@ -63,7 +63,9 @@ public class RankViewModel : ViewModelBase
             var matrix = ParseMatrix(InputText);
             if (matrix == null)
             {
-                Status = "Invalid matrix format. Use rows separated by newlines, numbers by space.";
+                const string msg = "Invalid matrix format. Use rows separated by newlines, numbers by space.";
+                Status = "Помилка.";
+                ResultText = "Помилка:\n\n" + msg;
                 _lastProtocol = null;
                 return;
             }
@@ -75,8 +77,8 @@ public class RankViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Status = "Error: " + ex.Message;
-            ResultText = string.Empty;
+            Status = "Помилка.";
+            ResultText = "Помилка обчислення:\n\n" + ex.Message;
             _lastProtocol = null;
         }
     }

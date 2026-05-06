@@ -109,6 +109,17 @@ public class SimplexViewModel : ViewModelBase
     {
         static void ApplyUi(SimplexViewModel vm, SolverResult result, SimplexProtocol protocol, OptimizationMode m)
         {
+            if (!result.Success)
+            {
+                vm.Status = "Помилка.";
+                vm.ResultText = string.IsNullOrWhiteSpace(result.Message)
+                    ? "Помилка: обчислення не вдалося."
+                    : "Помилка:\n\n" + result.Message;
+                protocol.LogResult(result);
+                vm._lastProtocol = protocol.GetText();
+                return;
+            }
+
             vm.ResultText = FormatResult(result);
             protocol.LogResult(result);
             vm._lastProtocol = protocol.GetText();
@@ -120,8 +131,8 @@ public class SimplexViewModel : ViewModelBase
         void ApplyError(Exception ex)
         {
             string detail = FormatExceptionDetail(ex);
-            Status = "Error — see result panel below.";
-            ResultText = detail;
+            Status = "Помилка.";
+            ResultText = "Помилка обчислення:\n\n" + detail;
             _lastProtocol = null;
         }
 
