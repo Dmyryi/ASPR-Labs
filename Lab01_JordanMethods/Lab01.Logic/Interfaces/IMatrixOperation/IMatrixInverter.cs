@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Lab01.Logic.Interfaces.IBasicLogic;
 
-namespace Lab01.Logic.Interfaces.IBasicLogic
+public interface IMatrixInverter
 {
-    public interface IMatrixInverter
-    {
-
-        public double[,] Invert(double[,] matrix);
-    }
+    double[,] Invert(double[,] matrix);
 }

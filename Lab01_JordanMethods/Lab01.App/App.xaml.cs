@@ -1,41 +1,58 @@
 using System.Windows;
+using Lab01.App.ViewModels;
 using Lab01.Logic;
 using Lab01.Logic.BasicLogic;
 using Lab01.Logic.Interfaces;
 using Lab01.Logic.Interfaces.IBasicLogic;
+using Lab01.Logic.Gomori;
+using Lab01.Logic.Simplex;
+using Lab01.Logic.Simplex.Parsing;
+using Lab01.Logic.Simplex.Stages;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lab01.App;
 
 public partial class App : Application
 {
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+
+        var services = ConfigureServices();
+        var mainWindow = new MainWindow
+        {
+            DataContext = services.GetRequiredService<MainViewModel>()
+        };
+        mainWindow.Show();
+    }
+
     private static IServiceProvider ConfigureServices()
     {
         var services = new ServiceCollection();
 
         services.AddSingleton<IJordan, JordanSolver>();
+        services.AddSingleton<IPivotSelector, PivotSelector>();
         services.AddSingleton<IProtocolSaver, ProtocolSaver>();
-        services.AddTransient<IMatrixInverter>(sp => new MatrixInverter(sp.GetRequiredService<IJordan>(), null));
+        services.AddSingleton<ILinearProgramParser, LinearProgramParser>();
+        services.AddSingleton<ISimplexSolverFactory, SimplexSolverFactory>();
+        services.AddSingleton<IGomorySolver, GomorySolver>();
+
+        services.AddTransient<IMatrixInverter>(sp => new MatrixInverter(sp.GetRequiredService<IJordan>()));
         services.AddTransient<IRankCalculator>(sp => new RankCalculator(sp.GetRequiredService<IJordan>()));
+        services.AddTransient<ILinearSystemSolver>(sp =>
+            new InverseSolveStrategy(sp.GetRequiredService<IMatrixInverter>()));
 
-        services.AddTransient<ViewModels.InverseMatrixViewModel>();
-        services.AddTransient<ViewModels.RankViewModel>();
-        services.AddTransient<ViewModels.LinearSystemViewModel>();
-        services.AddTransient<ViewModels.SimplexViewModel>();
-        services.AddTransient<ViewModels.MainViewModel>();
+        services.AddTransient<InverseMatrixViewModel>();
+        services.AddTransient<RankViewModel>();
+        services.AddTransient<LinearSystemViewModel>();
+        services.AddTransient<SimplexViewModel>();
+        services.AddTransient<GomoryViewModel>();
+        services.AddTransient<MainViewModel>();
 
+        services.AddSingleton<Func<InverseMatrixViewModel>>(sp => sp.GetRequiredService<InverseMatrixViewModel>);
+        services.AddSingleton<Func<RankViewModel>>(sp => sp.GetRequiredService<RankViewModel>);
+        services.AddSingleton<Func<LinearSystemViewModel>>(sp => sp.GetRequiredService<LinearSystemViewModel>);
 
         return services.BuildServiceProvider();
-    }
-
-    protected override void OnStartup(StartupEventArgs e)
-    {
-        base.OnStartup(e);
-        var services = ConfigureServices();
-        var mainWindow = new MainWindow
-        {
-            DataContext = services.GetRequiredService<ViewModels.MainViewModel>()
-        };
-        mainWindow.Show();
     }
 }

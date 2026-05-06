@@ -1,0 +1,156 @@
+<UserControl x:Class="Lab01.App.Views.GomoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,18" Orientation="Horizontal">
+            <TextBlock Text="Gomori Integer LP" Style="{StaticResource TitleText}" VerticalAlignment="Center"/>
+            <Border Margin="14,0,0,0" Padding="10,4" CornerRadius="8"
+                    Background="{StaticResource CardSurface}" BorderBrush="{StaticResource CardStroke}" BorderThickness="1"
+                    VerticalAlignment="Center">
+                <TextBlock Text="x ∈ ℤ" Style="{StaticResource SubtitleText}" FontWeight="SemiBold" FontSize="13"/>
+            </Border>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*" MinWidth="320"/>
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <Border Style="{StaticResource FeatureCard}" Margin="0,0,0,16">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="Objective Function Z" Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Row="1" Text="приклад: x1 + 4x2" Style="{StaticResource HintText}"/>
+                            <TextBox Grid.Row="2" Text="{Binding ObjectiveText, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource InputTextBox}"
+                                     Tag="x1 + 4x2"
+                                     MinHeight="56"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Style="{StaticResource CardBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Button Grid.Row="0" Command="{Binding LoadExampleCommand}"
+                                    Style="{StaticResource SecondaryButton}" Padding="12,8"
+                                    HorizontalAlignment="Stretch" Margin="0,0,0,14">
+                                <TextBlock Text="Load test example" FontSize="12"/>
+                            </Button>
+
+                            <TextBlock Grid.Row="1" Text="Constraints" Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Row="2"
+                                       Text="одне на рядок, оператори: &lt;=, &gt;=, =. Усі x_j мають бути цілими ≥ 0."
+                                       Style="{StaticResource HintText}"/>
+                            <TextBox Grid.Row="3" Text="{Binding ConstraintsText, UpdateSourceTrigger=PropertyChanged}"
+                                     AcceptsReturn="True" Style="{StaticResource InputTextBox}"
+                                     Tag="2x1 + x2 &lt;= 6&#x0a;x1 + 3x2 &lt;= 4"
+                                     MinHeight="180" VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <TabControl Grid.Column="2" Style="{StaticResource PillTabControl}"
+                        ItemContainerStyle="{StaticResource PillTabItem}">
+                <TabItem Header="Maximization">
+                    <StackPanel Margin="0,4,0,0">
+                        <Border Style="{StaticResource SmallCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="Options" Style="{StaticResource SectionHeader}"/>
+                                <Grid Margin="0,0,0,16">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Ліміт відсічень"
+                                               Style="{StaticResource LabelText}" Margin="0" VerticalAlignment="Center"/>
+                                    <TextBox Grid.Column="1"
+                                             Text="{Binding MaxCuts, UpdateSourceTrigger=PropertyChanged}"
+                                             Style="{StaticResource InputTextBox}"
+                                             Width="80" MinHeight="36" Padding="10,8"
+                                             HorizontalContentAlignment="Center"/>
+                                </Grid>
+                                <TextBlock Text="Actions" Style="{StaticResource SectionHeader}"/>
+                                <Button Command="{Binding SolveMaxCommand}" Style="{StaticResource ActionButton}"
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                                    <TextBlock Text="Run Max (integer)" VerticalAlignment="Center"/>
+                                </Button>
+                                <Button Command="{Binding SaveProtocolCommand}" Style="{StaticResource SecondaryButton}"
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,4">
+                                    <TextBlock Text="Save Protocol" VerticalAlignment="Center"/>
+                                </Button>
+                                <TextBlock Text="{Binding Status}" Style="{StaticResource StatusText}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource ResultCard}" VerticalAlignment="Stretch">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="Integer Result" Style="{StaticResource SectionHeader}"/>
+                                <TextBox Grid.Row="1" Text="{Binding ResultText, Mode=OneWay}" IsReadOnly="True"
+                                         Style="{StaticResource InputTextBox}"
+                                         Tag="цілочисловий розв'язок"
+                                         MinHeight="140" VerticalScrollBarVisibility="Auto"
+                                         VerticalAlignment="Stretch" Margin="0,4,0,0"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </TabItem>
+
+                <TabItem Header="Minimization">
+                    <StackPanel Margin="0,4,0,0">
+                        <Border Style="{StaticResource SmallCard}" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="Actions" Style="{StaticResource SectionHeader}"/>
+                                <Button Command="{Binding SolveMinCommand}" Style="{StaticResource ActionButton}"
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                                    <TextBlock Text="Run Min (integer)" VerticalAlignment="Center"/>
+                                </Button>
+                                <Button Command="{Binding SaveProtocolCommand}" Style="{StaticResource SecondaryButton}"
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,4">
+                                    <TextBlock Text="Save Protocol" VerticalAlignment="Center"/>
+                                </Button>
+                                <TextBlock Text="{Binding Status}" Style="{StaticResource StatusText}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource ResultCard}" VerticalAlignment="Stretch">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="Integer Result" Style="{StaticResource SectionHeader}"/>
+                                <TextBox Grid.Row="1" Text="{Binding ResultText, Mode=OneWay}" IsReadOnly="True"
+                                         Style="{StaticResource InputTextBox}"
+                                         Tag="цілочисловий розв'язок"
+                                         MinHeight="140" VerticalScrollBarVisibility="Auto"
+                                         VerticalAlignment="Stretch" Margin="0,4,0,0"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Grid>
+</UserControl>

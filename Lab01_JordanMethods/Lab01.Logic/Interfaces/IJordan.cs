@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Lab01.Logic.Interfaces;
 
-namespace Lab01.Logic.Interfaces
+public interface IJordan
 {
-    public interface IJordan
-    {
-        double[,] JordanMethod(double[,] matrix, int r, int s);
-        double[,] ModifiedJordanMethod(double[,] matrix, int r, int s);
+    double[,] JordanMethod(double[,] matrix, int r, int s);
 
-    }
+    double[,] ModifiedJordanMethod(double[,] matrix, int r, int s);
 }

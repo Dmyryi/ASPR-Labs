@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Lab01.Logic.Interfaces.IBasicLogic;
 
-namespace Lab01.Logic.Interfaces.IBasicLogic
+public interface ILinearSystemSolver
 {
-    public interface ILinearSystemSolver
-    {
-        public double[] Solve(double[,] matrix, double[] vector);   
-    }
+    double[] Solve(double[,] matrix, double[] vector);
 }

@@ -1,26 +1,39 @@
 using System.Windows.Input;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Lab01.App.ViewModels;
 
-public class MainViewModel : ViewModelBase
+public sealed class MainViewModel : ViewModelBase
 {
-    private ViewModelBase _currentViewModel = null!;
-    private int _selectedIndex;
-    private readonly IServiceProvider _services;
+    private readonly Func<InverseMatrixViewModel> _inverseFactory;
+    private readonly Func<RankViewModel> _rankFactory;
+    private readonly Func<LinearSystemViewModel> _linearSystemFactory;
 
-    public MainViewModel(IServiceProvider services)
+    private ViewModelBase _currentViewModel;
+    private int _selectedIndex;
+
+    public MainViewModel(
+        Func<InverseMatrixViewModel> inverseFactory,
+        Func<RankViewModel> rankFactory,
+        Func<LinearSystemViewModel> linearSystemFactory,
+        SimplexViewModel simplexViewModel,
+        GomoryViewModel gomoryViewModel)
     {
-        _services = services;
-        SimplexViewModel = _services.GetRequiredService<SimplexViewModel>();
-        _currentViewModel = _services.GetRequiredService<InverseMatrixViewModel>();
+        _inverseFactory = inverseFactory;
+        _rankFactory = rankFactory;
+        _linearSystemFactory = linearSystemFactory;
+        SimplexViewModel = simplexViewModel;
+        GomoryViewModel = gomoryViewModel;
+
+        _currentViewModel = _inverseFactory();
         _selectedIndex = 0;
-        SelectInverseCommand = new RelayCommand(() => { CurrentViewModel = _services.GetRequiredService<InverseMatrixViewModel>(); SelectedIndex = 0; });
-        SelectRankCommand = new RelayCommand(() => { CurrentViewModel = _services.GetRequiredService<RankViewModel>(); SelectedIndex = 1; });
-        SelectLinearSystemCommand = new RelayCommand(() => { CurrentViewModel = _services.GetRequiredService<LinearSystemViewModel>(); SelectedIndex = 2; });
+
+        SelectInverseCommand = new RelayCommand(() => Navigate(_inverseFactory(), 0));
+        SelectRankCommand = new RelayCommand(() => Navigate(_rankFactory(), 1));
+        SelectLinearSystemCommand = new RelayCommand(() => Navigate(_linearSystemFactory(), 2));
     }
 
     public SimplexViewModel SimplexViewModel { get; }
+    public GomoryViewModel GomoryViewModel { get; }
 
     public int SelectedIndex
     {
@@ -35,7 +48,7 @@ public class MainViewModel : ViewModelBase
     public ViewModelBase CurrentViewModel
     {
         get => _currentViewModel;
-        set
+        private set
         {
             _currentViewModel = value;
             OnPropertyChanged();
@@ -45,4 +58,10 @@ public class MainViewModel : ViewModelBase
     public ICommand SelectInverseCommand { get; }
     public ICommand SelectRankCommand { get; }
     public ICommand SelectLinearSystemCommand { get; }
+
+    private void Navigate(ViewModelBase viewModel, int index)
+    {
+        CurrentViewModel = viewModel;
+        SelectedIndex = index;
+    }
 }

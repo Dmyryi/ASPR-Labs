@@ -1,9 +1,8 @@
 ﻿using Lab01.Logic.Models;
 
-namespace Lab01.Logic.Interfaces
+namespace Lab01.Logic.Interfaces;
+
+public interface IBasicSolutionFinder
 {
-    public interface IBasicSolutionFinder
-    {
-        void Find(SimplexTableau tableau);
-    }
+    void Find(SimplexTableau tableau);
 }

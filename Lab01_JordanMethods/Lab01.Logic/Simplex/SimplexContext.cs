@@ -1,31 +1,27 @@
-﻿using System;
-using Lab01.Logic.Interfaces;
+﻿using Lab01.Logic.Interfaces;
 using Lab01.Logic.Models;
 
-namespace Lab01.Logic.Simplex
+namespace Lab01.Logic.Simplex;
+
+/// <summary>
+/// Контекст стратегії: тримає поточний <see cref="ILinearSolver"/> і делегує йому виклик.
+/// Дозволяє підмінити стратегію без зміни клієнтського коду.
+/// </summary>
+public sealed class SimplexContext
 {
-    public class SimplexContext
+    private ILinearSolver? _solver;
+
+    public SimplexContext() { }
+
+    public SimplexContext(ILinearSolver solver) => _solver = solver;
+
+    public void SetStrategy(ILinearSolver solver) => _solver = solver;
+
+    public SolverResult ExecuteStrategy(double[] z, double[,] a, double[] b)
     {
-        private ILinearSolver? solver;
+        if (_solver is null)
+            throw new InvalidOperationException("Стратегію солвера не встановлено.");
 
-        public SimplexContext() { }
-
-        public SimplexContext(ILinearSolver solver) { this.solver = solver; }
-
-        public void SetStrategy(ILinearSolver solver)
-        {
-            this.solver = solver;
-        }
-
-        public SolverResult ExecuteStrategy(double[] z, double[,] a, double[] b)
-        {
-            if (solver == null)
-            {
-                throw new InvalidOperationException(
-                    "Солвер не встановлено. Спершу оберіть стратегію (Min або Max).");
-            }
-
-            return solver.Solve(z, a, b);
-        }
+        return _solver.Solve(z, a, b);
     }
 }

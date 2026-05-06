@@ -2,7 +2,7 @@ using System.Windows.Input;
 
 namespace Lab01.App.ViewModels;
 
-public class RelayCommand : ICommand
+public sealed class RelayCommand : ICommand
 {
     private readonly Action _execute;
     private readonly Func<bool>? _canExecute;

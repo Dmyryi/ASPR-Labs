@@ -1,40 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Lab01.Logic.Interfaces;
+﻿using Lab01.Logic.Interfaces;
 using Lab01.Logic.Interfaces.IBasicLogic;
 
-namespace Lab01.Logic.BasicLogic
+namespace Lab01.Logic.BasicLogic;
+
+public sealed class RankCalculator : IRankCalculator
 {
-   public class RankCalculator:IRankCalculator
+    private const double Epsilon = 1e-10;
+
+    private readonly IJordan _jordan;
+
+    public RankCalculator(IJordan jordan) => _jordan = jordan;
+
+    public int Calculate(double[,] matrixA)
     {
-        private readonly IJordan _jordan;
+        int rows = matrixA.GetLength(0);
+        int cols = matrixA.GetLength(1);
+        int rank = 0;
+        double[,] result = matrixA;
+        int limit = Math.Min(rows, cols);
 
-        public RankCalculator(IJordan jordan)
+        for (int i = 0; i < limit; i++)
         {
-            _jordan = jordan;
-        }
-
-        public int Calculate(double[,] matrixA)
-        {
-            int rows = matrixA.GetLength(0);
-            int cols = matrixA.GetLength(1);
-            int r = 0;
-            double[,] result = matrixA;
-            int limit = Math.Min(rows, cols);
-
-            for (int i = 0; i < limit; i++)
+            if (Math.Abs(result[i, i]) > Epsilon)
             {
-                if (result[i,i] != 0)
-                {
-                   result = _jordan.JordanMethod(result, i, i);
-                    r++;
-                }
+                result = _jordan.JordanMethod(result, i, i);
+                rank++;
             }
-            return r;
         }
 
+        return rank;
     }
 }

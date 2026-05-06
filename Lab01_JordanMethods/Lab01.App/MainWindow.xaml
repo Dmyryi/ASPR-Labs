@@ -7,13 +7,14 @@
         xmlns:vm="clr-namespace:Lab01.App.ViewModels"
         xmlns:views="clr-namespace:Lab01.App.Views"
         mc:Ignorable="d"
-        Title="Lab01 — Jordan Methods" Height="800" Width="1180"
+        Title="Lab01 — Jordan Methods" Height="820" Width="1240" MinHeight="640" MinWidth="980"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip">
     <Window.Resources>
-        <!-- Фон: изображение + затемнение для читаемости UI -->
-        <ImageBrush x:Key="WindowBackground" ImageSource="/Lab01.App;component/wmremove-transformed.png"
+        <ImageBrush x:Key="WindowBackground"
+                    ImageSource="/Lab01.App;component/wmremove-transformed.png"
                     Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+
         <DataTemplate DataType="{x:Type vm:InverseMatrixViewModel}">
             <views:InverseMatrixView DataContext="{Binding}"/>
         </DataTemplate>
@@ -26,197 +27,181 @@
         <DataTemplate DataType="{x:Type vm:SimplexViewModel}">
             <views:SimplexView DataContext="{Binding}"/>
         </DataTemplate>
-        <!-- Sidebar: transparent, active icon with glow -->
-        <Style x:Key="SidebarItem" TargetType="Button">
-            <Setter Property="Height" Value="52"/>
-            <Setter Property="Margin" Value="0,6"/>
-            <Setter Property="Foreground" Value="#A0A0A8"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            <Setter Property="Padding" Value="20,0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" CornerRadius="14" Background="{TemplateBinding Background}" Margin="0,0,12,0">
-                            <Border.Effect>
-                                <DropShadowEffect x:Name="glow" BlurRadius="0" Color="Transparent" Opacity="0"/>
-                            </Border.Effect>
-                            <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#70FFFFFF"/>
-                                <Setter Property="Foreground" Value="White"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="SidebarBtn0" TargetType="Button" BasedOn="{StaticResource SidebarItem}">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding SelectedIndex}" Value="0">
-                    <Setter Property="Background" Value="#70FFFFFF"/>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="border" CornerRadius="14" Background="#70FFFFFF" Margin="0,0,12,0">
-                                    <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="SidebarBtn1" TargetType="Button" BasedOn="{StaticResource SidebarItem}">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding SelectedIndex}" Value="1">
-                    <Setter Property="Background" Value="#70FFFFFF"/>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="border" CornerRadius="14" Background="#70FFFFFF" Margin="0,0,12,0">
-                                    <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="SidebarBtn2" TargetType="Button" BasedOn="{StaticResource SidebarItem}">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding SelectedIndex}" Value="2">
-                    <Setter Property="Background" Value="#70FFFFFF"/>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="border" CornerRadius="14" Background="#70FFFFFF" Margin="0,0,12,0">
-                                    <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="SidebarBtn3" TargetType="Button" BasedOn="{StaticResource SidebarItem}">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding SelectedIndex}" Value="3">
-                    <Setter Property="Background" Value="#70FFFFFF"/>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="border" CornerRadius="14" Background="#70FFFFFF" Margin="0,0,12,0">
-                                    <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <ControlTemplate x:Key="CloseButtonTemplate" TargetType="Button">
-            <Border x:Name="bg" CornerRadius="18" Background="#20FFFFFF">
-                <TextBlock x:Name="icon" Text="&#xE8BB;" FontFamily="Segoe MDL2 Assets" FontSize="14"
-                           Foreground="#B0B0B8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter TargetName="bg" Property="Background" Value="#E81123"/>
-                    <Setter TargetName="icon" Property="Foreground" Value="White"/>
-                </Trigger>
-            </ControlTemplate.Triggers>
-        </ControlTemplate>
+        <DataTemplate DataType="{x:Type vm:GomoryViewModel}">
+            <views:GomoryView DataContext="{Binding}"/>
+        </DataTemplate>
     </Window.Resources>
 
-    <!-- Rounded window with photo background, без границ -->
-    <Border x:Name="WindowBorder" CornerRadius="28" BorderThickness="0"
-            Background="{StaticResource WindowBackground}">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+    <!-- Зовнішня тінь і скруглені кути -->
+    <Grid Margin="20">
+        <Grid.Effect>
+            <DropShadowEffect Color="#000000" BlurRadius="40" ShadowDepth="0" Opacity="0.55"/>
+        </Grid.Effect>
 
-            <!-- Top bar (draggable), полупрозрачная чтобы фото просвечивало -->
-            <Border Grid.Row="0" Padding="28,20" CornerRadius="28,28,0,0" MouseLeftButtonDown="TopBar_OnMouseLeftButtonDown"
-                    Background="#50000000">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Border Background="#70FFFFFF" CornerRadius="14" Padding="20,14" VerticalAlignment="Center" HorizontalAlignment="Left"
-                            BorderThickness="0">
-                        <TextBlock Text="Welcome" FontFamily="Inter, Segoe UI Variable Display, Segoe UI" FontSize="17" FontWeight="Bold" 
-                                   Foreground="White" VerticalAlignment="Center"/>
-                    </Border>
-                    <Button Grid.Column="1" Width="40" Height="40" Padding="0" Margin="20,0,0,0" Click="CloseButton_OnClick" Cursor="Hand"
-                            Template="{StaticResource CloseButtonTemplate}"/>
-                </Grid>
-            </Border>
+        <Border x:Name="WindowBorder" CornerRadius="22" BorderThickness="0"
+                Background="{StaticResource WindowBackground}" ClipToBounds="True">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0" Margin="20,0,20,20">
-                <TabItem Header="Jordan Methods">
-                    <Grid Margin="0,12,0,0">
+                <!-- ===================== ТОПБАР ===================== -->
+                <Border Grid.Row="0" Padding="22,14" CornerRadius="22,22,0,0"
+                        MouseLeftButtonDown="TopBar_OnMouseLeftButtonDown"
+                        Background="{StaticResource TopBarScrim}">
+                    <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Background="Transparent" Padding="16,24" VerticalAlignment="Stretch">
-                            <StackPanel VerticalAlignment="Top">
-                                <Button Command="{Binding SelectInverseCommand}" Style="{StaticResource SidebarBtn0}" ToolTip="Inverse Matrix">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xE80F;" FontFamily="Segoe MDL2 Assets" FontSize="24" VerticalAlignment="Center" Margin="0,0,14,0"
-                                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                                        <TextBlock Text="Inverse" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"
-                                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                                    </StackPanel>
-                                </Button>
-                                <Button Command="{Binding SelectRankCommand}" Style="{StaticResource SidebarBtn1}" ToolTip="Matrix Rank">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xE734;" FontFamily="Segoe MDL2 Assets" FontSize="24" VerticalAlignment="Center" Margin="0,0,14,0"
-                                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                                        <TextBlock Text="Rank" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"
-                                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                                    </StackPanel>
-                                </Button>
-                                <Button Command="{Binding SelectLinearSystemCommand}" Style="{StaticResource SidebarBtn2}" ToolTip="Linear System">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="&#xE9D9;" FontFamily="Segoe MDL2 Assets" FontSize="24" VerticalAlignment="Center" Margin="0,0,14,0"
-                                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                                        <TextBlock Text="Solve" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"
-                                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
-                                    </StackPanel>
-                                </Button>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Width="38" Height="38" CornerRadius="11"
+                                    Background="{StaticResource ButtonPrimary}" VerticalAlignment="Center">
+                                <TextBlock Text="J" FontFamily="{StaticResource UiFont}" FontSize="20" FontWeight="Bold"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="Jordan Methods" FontFamily="{StaticResource UiFont}"
+                                           FontSize="15" FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimary}"/>
+                                <TextBlock Text="Лінійна алгебра • Симплекс" FontFamily="{StaticResource UiFont}"
+                                           FontSize="11" Foreground="{StaticResource TextMuted}"/>
                             </StackPanel>
-                        </Border>
+                        </StackPanel>
 
-                        <Border Grid.Column="1" Margin="0" Padding="32" Background="#30000000">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                                <ContentControl Content="{Binding CurrentViewModel}" Margin="0,8,0,24"/>
-                            </ScrollViewer>
-                        </Border>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button x:Name="MinimizeButton" Style="{StaticResource WindowChromeButton}"
+                                    Click="MinimizeButton_OnClick" ToolTip="Згорнути">
+                                <TextBlock Text="&#xE921;" FontFamily="Segoe MDL2 Assets" FontSize="11"/>
+                            </Button>
+                            <Button x:Name="MaximizeButton" Style="{StaticResource WindowChromeButton}"
+                                    Click="MaximizeButton_OnClick" ToolTip="Розгорнути">
+                                <TextBlock x:Name="MaximizeIcon" Text="&#xE922;" FontFamily="Segoe MDL2 Assets" FontSize="11"/>
+                            </Button>
+                            <Button Style="{StaticResource WindowCloseButton}"
+                                    Click="CloseButton_OnClick" ToolTip="Закрити">
+                                <TextBlock Text="&#xE8BB;" FontFamily="Segoe MDL2 Assets" FontSize="11"/>
+                            </Button>
+                        </StackPanel>
                     </Grid>
-                </TabItem>
+                </Border>
 
-                <TabItem Header="Simplex">
-                    <Border Margin="0,12,0,0" Padding="32" Background="#30000000">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                            <views:SimplexView DataContext="{Binding SimplexViewModel}" Margin="0,8,0,24"/>
-                        </ScrollViewer>
-                    </Border>
-                </TabItem>
-            </TabControl>
-        </Grid>
-    </Border>
+                <!-- ===================== ОСНОВНА ОБЛАСТЬ ===================== -->
+                <Border Grid.Row="1" Background="{StaticResource ContentScrim}" Padding="22,16,22,22">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Pill-таби між модулями -->
+                        <TabControl Grid.Row="0" Grid.RowSpan="2"
+                                    Style="{StaticResource PillTabControl}"
+                                    ItemContainerStyle="{StaticResource PillTabItem}">
+                            <TabItem Header="Jordan Methods">
+                                <Grid Margin="0,4,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="210"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Бічне меню -->
+                                    <Border Grid.Column="0" Background="{StaticResource CardSurface}"
+                                            BorderBrush="{StaticResource CardStroke}" BorderThickness="1"
+                                            CornerRadius="18" Padding="12,16" VerticalAlignment="Stretch"
+                                            Margin="0,0,16,0">
+                                        <StackPanel VerticalAlignment="Top">
+                                            <TextBlock Text="МОДУЛІ" FontFamily="{StaticResource UiFont}"
+                                                       FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextMuted}"
+                                                       Margin="14,4,0,10"/>
+                                            <Button Command="{Binding SelectInverseCommand}" ToolTip="Inverse Matrix">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource SidebarItem}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding SelectedIndex}" Value="0">
+                                                                <Setter Property="Tag" Value="Active"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE80F;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                                                               VerticalAlignment="Center" Margin="0,0,12,0"
+                                                               Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                                    <TextBlock Text="Inverse" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"
+                                                               Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                                </StackPanel>
+                                            </Button>
+                                            <Button Command="{Binding SelectRankCommand}" ToolTip="Matrix Rank">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource SidebarItem}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding SelectedIndex}" Value="1">
+                                                                <Setter Property="Tag" Value="Active"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE734;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                                                               VerticalAlignment="Center" Margin="0,0,12,0"
+                                                               Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                                    <TextBlock Text="Rank" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"
+                                                               Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                                </StackPanel>
+                                            </Button>
+                                            <Button Command="{Binding SelectLinearSystemCommand}" ToolTip="Linear System">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource SidebarItem}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding SelectedIndex}" Value="2">
+                                                                <Setter Property="Tag" Value="Active"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE9D9;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                                                               VerticalAlignment="Center" Margin="0,0,12,0"
+                                                               Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                                    <TextBlock Text="Solve" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"
+                                                               Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+                                                </StackPanel>
+                                            </Button>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Grid.Column="1">
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                            <ContentControl Content="{Binding CurrentViewModel}" Margin="0,4,0,16"/>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Grid>
+                            </TabItem>
+
+                            <TabItem Header="Simplex">
+                                <Border Margin="0,4,0,0">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                        <views:SimplexView DataContext="{Binding SimplexViewModel}" Margin="0,4,0,16"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </TabItem>
+
+                            <TabItem Header="Gomori">
+                                <Border Margin="0,4,0,0">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                        <views:GomoryView DataContext="{Binding GomoryViewModel}" Margin="0,4,0,16"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </TabItem>
+                        </TabControl>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
 </Window>

@@ -7,18 +7,20 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,24">
-            <StackPanel>
-                <TextBlock Text="Simplex Optimization" Style="{StaticResource TitleText}" Margin="0,0,0,4"/>
-                <TextBlock Text="Min / Max search by constraints" FontSize="26" Foreground="#00D4AA" FontWeight="Light" Opacity="0.95"/>
-            </StackPanel>
-        </Grid>
+        <StackPanel Grid.Row="0" Margin="0,0,0,18" Orientation="Horizontal">
+            <TextBlock Text="Simplex Optimization" Style="{StaticResource TitleText}" VerticalAlignment="Center"/>
+            <Border Margin="14,0,0,0" Padding="10,4" CornerRadius="8"
+                    Background="{StaticResource CardSurface}" BorderBrush="{StaticResource CardStroke}" BorderThickness="1"
+                    VerticalAlignment="Center">
+                <TextBlock Text="Min / Max" Style="{StaticResource SubtitleText}" FontWeight="SemiBold" FontSize="13"/>
+            </Border>
+        </StackPanel>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="16"/>
-                <ColumnDefinition Width="*" MinWidth="300"/>
+                <ColumnDefinition Width="*" MinWidth="320"/>
             </Grid.ColumnDefinitions>
 
             <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -28,14 +30,14 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <StackPanel Grid.Row="0">
-                                <TextBlock Text="Objective Function Z" Style="{StaticResource SectionHeader}"/>
-                                <TextBlock Text="example: x1 + 2x2 - x3 - x4"
-                                           FontSize="13" Foreground="#FFF2F2F5" Margin="0,-8,0,8"/>
-                            </StackPanel>
-                            <TextBox Grid.Row="1" Text="{Binding ObjectiveText, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{StaticResource InputTextBox}" MinHeight="56"/>
+                            <TextBlock Grid.Row="0" Text="Objective Function Z" Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Row="1" Text="приклад: x1 + 2x2 - x3 - x4" Style="{StaticResource HintText}"/>
+                            <TextBox Grid.Row="2" Text="{Binding ObjectiveText, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource InputTextBox}"
+                                     Tag="x1 + 2x2 - x3 - x4"
+                                     MinHeight="56"/>
                         </Grid>
                     </Border>
 
@@ -44,59 +46,60 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <Border Grid.Row="0" Background="#35FFFFFF" CornerRadius="10" Padding="10" Margin="0,0,0,10">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="8"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Button Grid.Column="0" Command="{Binding LoadExample1Command}" Style="{StaticResource SecondaryButton}" Padding="10,8">
-                                        <TextBlock Text="Load example 1" FontSize="12"/>
-                                    </Button>
-                                    <Button Grid.Column="2" Command="{Binding LoadExample2Command}" Style="{StaticResource SecondaryButton}" Padding="10,8">
-                                        <TextBlock Text="Load example 2" FontSize="12"/>
-                                    </Button>
-                                </Grid>
-                            </Border>
+                            <Grid Grid.Row="0" Margin="0,0,0,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Command="{Binding LoadExample1Command}"
+                                        Style="{StaticResource SecondaryButton}" Padding="12,8">
+                                    <TextBlock Text="Load example 1" FontSize="12"/>
+                                </Button>
+                                <Button Grid.Column="2" Command="{Binding LoadExample2Command}"
+                                        Style="{StaticResource SecondaryButton}" Padding="12,8">
+                                    <TextBlock Text="Load example 2" FontSize="12"/>
+                                </Button>
+                            </Grid>
 
-                            <StackPanel Grid.Row="1">
-                                <TextBlock Text="Constraints" Style="{StaticResource SectionHeader}"/>
-                                <TextBlock Text="one per line, use &lt;=, &gt;= or =, example: x1 + x2 - x3 - 2x4 &lt;= 6"
-                                           FontSize="13" Foreground="#FFF2F2F5" Margin="0,-8,0,8" TextWrapping="Wrap"/>
-                            </StackPanel>
-                            <TextBox Grid.Row="2" Text="{Binding ConstraintsText, UpdateSourceTrigger=PropertyChanged}"
-                                     AcceptsReturn="True" Style="{StaticResource InputTextBox}" MinHeight="170"
-                                     VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch"/>
+                            <TextBlock Grid.Row="1" Text="Constraints" Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Row="2"
+                                       Text="одне на рядок, оператори: &lt;=, &gt;=, =. Приклад: x1 + x2 - x3 - 2x4 &lt;= 6"
+                                       Style="{StaticResource HintText}"/>
+                            <TextBox Grid.Row="3" Text="{Binding ConstraintsText, UpdateSourceTrigger=PropertyChanged}"
+                                     AcceptsReturn="True" Style="{StaticResource InputTextBox}"
+                                     Tag="x1 + x2 - x3 - 2x4 &lt;= 6&#x0a;x1 + x2 + x3 - x4 &gt;= 5&#x0a;2x1 - x2 + 3x3 + 4x4 &lt;= 10"
+                                     MinHeight="180" VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch"/>
                         </Grid>
                     </Border>
                 </StackPanel>
             </ScrollViewer>
 
-            <TabControl Grid.Column="2" Background="Transparent" BorderThickness="0">
+            <TabControl Grid.Column="2" Style="{StaticResource PillTabControl}"
+                        ItemContainerStyle="{StaticResource PillTabItem}">
                 <TabItem Header="Maximization">
-                    <StackPanel Margin="0,8,0,0" VerticalAlignment="Stretch">
+                    <StackPanel Margin="0,4,0,0">
                         <Border Style="{StaticResource SmallCard}" Margin="0,0,0,16">
                             <StackPanel>
                                 <TextBlock Text="Options" Style="{StaticResource SectionHeader}"/>
-                                <CheckBox IsChecked="{Binding UseZeroRowElimination}" 
-                                         Content="Use zero row elimination" 
-                                         Foreground="#FFF2F2F5" 
-                                         Margin="0,0,0,12"
-                                         FontSize="13"/>
+                                <CheckBox IsChecked="{Binding UseZeroRowElimination}"
+                                          Style="{StaticResource ModernCheckBox}"
+                                          Content="Use zero row elimination"
+                                          Margin="0,0,0,16"/>
                                 <TextBlock Text="Actions" Style="{StaticResource SectionHeader}"/>
                                 <Button Command="{Binding SolveMaxCommand}" Style="{StaticResource ActionButton}"
-                                        HorizontalAlignment="Stretch" Margin="0,0,0,8">
-                                    <TextBlock Text="Run Maximization" FontSize="14" VerticalAlignment="Center"/>
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                                    <TextBlock Text="Run Maximization" VerticalAlignment="Center"/>
                                 </Button>
                                 <Button Command="{Binding SaveProtocolCommand}" Style="{StaticResource SecondaryButton}"
-                                        HorizontalAlignment="Stretch" Margin="0,0,0,8">
-                                    <TextBlock Text="Save Protocol" FontSize="14" VerticalAlignment="Center"/>
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,4">
+                                    <TextBlock Text="Save Protocol" VerticalAlignment="Center"/>
                                 </Button>
-                                <TextBlock Text="{Binding Status}" Foreground="#FFF2F2F5" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Status}" Style="{StaticResource StatusText}"/>
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource ResultCard}" VerticalAlignment="Stretch">
@@ -107,8 +110,9 @@
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0" Text="Simplex Result" Style="{StaticResource SectionHeader}"/>
                                 <TextBox Grid.Row="1" Text="{Binding ResultText, Mode=OneWay}" IsReadOnly="True"
-                                         Style="{StaticResource InputTextBox}" Foreground="#FFFFFF"
-                                         MinHeight="130" VerticalScrollBarVisibility="Auto"
+                                         Style="{StaticResource InputTextBox}"
+                                         Tag="результат симплекс-методу"
+                                         MinHeight="140" VerticalScrollBarVisibility="Auto"
                                          VerticalAlignment="Stretch" Margin="0,4,0,0"/>
                             </Grid>
                         </Border>
@@ -116,19 +120,19 @@
                 </TabItem>
 
                 <TabItem Header="Minimization">
-                    <StackPanel Margin="0,8,0,0" VerticalAlignment="Stretch">
+                    <StackPanel Margin="0,4,0,0">
                         <Border Style="{StaticResource SmallCard}" Margin="0,0,0,16">
                             <StackPanel>
                                 <TextBlock Text="Actions" Style="{StaticResource SectionHeader}"/>
                                 <Button Command="{Binding SolveMinCommand}" Style="{StaticResource ActionButton}"
-                                        HorizontalAlignment="Stretch" Margin="0,0,0,8">
-                                    <TextBlock Text="Run Minimization" FontSize="14" VerticalAlignment="Center"/>
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                                    <TextBlock Text="Run Minimization" VerticalAlignment="Center"/>
                                 </Button>
                                 <Button Command="{Binding SaveProtocolCommand}" Style="{StaticResource SecondaryButton}"
-                                        HorizontalAlignment="Stretch" Margin="0,0,0,8">
-                                    <TextBlock Text="Save Protocol" FontSize="14" VerticalAlignment="Center"/>
+                                        HorizontalAlignment="Stretch" Margin="0,0,0,4">
+                                    <TextBlock Text="Save Protocol" VerticalAlignment="Center"/>
                                 </Button>
-                                <TextBlock Text="{Binding Status}" Foreground="#FFF2F2F5" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Status}" Style="{StaticResource StatusText}"/>
                             </StackPanel>
                         </Border>
                         <Border Style="{StaticResource ResultCard}" VerticalAlignment="Stretch">
@@ -139,8 +143,9 @@
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0" Text="Simplex Result" Style="{StaticResource SectionHeader}"/>
                                 <TextBox Grid.Row="1" Text="{Binding ResultText, Mode=OneWay}" IsReadOnly="True"
-                                         Style="{StaticResource InputTextBox}" Foreground="#FFFFFF"
-                                         MinHeight="130" VerticalScrollBarVisibility="Auto"
+                                         Style="{StaticResource InputTextBox}"
+                                         Tag="результат симплекс-методу"
+                                         MinHeight="140" VerticalScrollBarVisibility="Auto"
                                          VerticalAlignment="Stretch" Margin="0,4,0,0"/>
                             </Grid>
                         </Border>

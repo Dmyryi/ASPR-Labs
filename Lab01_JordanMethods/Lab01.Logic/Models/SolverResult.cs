@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Lab01.Logic.Models;
 
-namespace Lab01.Logic.Models
+public sealed class SolverResult
 {
-   public class SolverResult
-    {
-      
-            public double Z { get; set; }        
-            public double[] X { get; set; }
-            public double[] Y { get; set; } = Array.Empty<double>();
-            public bool Success { get; set; }    
-            public string Message { get; set; } 
-        
-    }
+    public required double[] X { get; init; }
+
+    public double[] Y { get; init; } = Array.Empty<double>();
+
+    public double Z { get; init; }
+
+    public bool Success { get; init; }
+
+    public string Message { get; init; } = string.Empty;
 }

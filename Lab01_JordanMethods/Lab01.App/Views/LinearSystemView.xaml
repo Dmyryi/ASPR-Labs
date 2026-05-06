@@ -7,12 +7,14 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,24">
-            <StackPanel>
-                <TextBlock Text="Linear System" Style="{StaticResource TitleText}" Margin="0,0,0,4"/>
-                <TextBlock Text="Ax = B" FontSize="32" Foreground="#00D4AA" FontWeight="Light" Opacity="0.95"/>
-            </StackPanel>
-        </Grid>
+        <StackPanel Grid.Row="0" Margin="0,0,0,18" Orientation="Horizontal">
+            <TextBlock Text="Linear System" Style="{StaticResource TitleText}" VerticalAlignment="Center"/>
+            <Border Margin="14,0,0,0" Padding="10,4" CornerRadius="8"
+                    Background="{StaticResource CardSurface}" BorderBrush="{StaticResource CardStroke}" BorderThickness="1"
+                    VerticalAlignment="Center">
+                <TextBlock Text="A·x = B" Style="{StaticResource SubtitleText}" FontWeight="SemiBold" FontSize="13"/>
+            </Border>
+        </StackPanel>
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -21,57 +23,55 @@
                 <ColumnDefinition Width="*" MinWidth="300"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Main cards: Matrix A + Vector B -->
             <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
                     <Border Style="{StaticResource FeatureCard}" Margin="0,0,0,16">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <StackPanel Grid.Row="0">
-                                <TextBlock Text="Matrix A" Style="{StaticResource SectionHeader}"/>
-                                <TextBlock Text="rows on new lines, numbers separated by spaces" 
-                                           FontSize="13" Foreground="#FFF2F2F5" Margin="0,-8,0,8"/>
-                            </StackPanel>
-                            <TextBox Grid.Row="1" Text="{Binding MatrixText, UpdateSourceTrigger=PropertyChanged}" 
+                            <TextBlock Grid.Row="0" Text="Matrix A" Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Row="1" Text="рядки на нових лініях, числа через пробіл"
+                                       Style="{StaticResource HintText}"/>
+                            <TextBox Grid.Row="2" Text="{Binding MatrixText, UpdateSourceTrigger=PropertyChanged}"
                                      AcceptsReturn="True" Style="{StaticResource InputTextBox}"
-                                     MinHeight="120" VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch"/>
+                                     Tag="5 -3 7&#x0a;-1 4 -2&#x0a;3 -1 2"
+                                     MinHeight="140" VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch"/>
                         </Grid>
                     </Border>
-                    <Border Style="{StaticResource CardBorder}" Margin="0,0,0,0">
+                    <Border Style="{StaticResource CardBorder}">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <StackPanel Grid.Row="0">
-                                <TextBlock Text="Vector B" Style="{StaticResource SectionHeader}"/>
-                                <TextBlock Text="numbers separated by spaces" 
-                                           FontSize="13" Foreground="#FFF2F2F5" Margin="0,-8,0,8"/>
-                            </StackPanel>
-                            <TextBox Grid.Row="1" Text="{Binding VectorText, UpdateSourceTrigger=PropertyChanged}" 
-                                     Style="{StaticResource InputTextBox}" MinHeight="56"/>
+                            <TextBlock Grid.Row="0" Text="Vector B" Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Row="1" Text="числа через пробіл" Style="{StaticResource HintText}"/>
+                            <TextBox Grid.Row="2" Text="{Binding VectorText, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource InputTextBox}"
+                                     Tag="13 13 12"
+                                     MinHeight="56"/>
                         </Grid>
                     </Border>
                 </StackPanel>
             </ScrollViewer>
 
-            <!-- Right panel: actions + result -->
             <StackPanel Grid.Column="2" VerticalAlignment="Stretch">
                 <Border Style="{StaticResource SmallCard}" Margin="0,0,0,16">
                     <StackPanel>
                         <TextBlock Text="Actions" Style="{StaticResource SectionHeader}"/>
-                        <Button Command="{Binding ComputeCommand}" Style="{StaticResource ActionButton}" 
-                                HorizontalAlignment="Stretch" Margin="0,0,0,8">
-                            <TextBlock Text="Run" FontSize="14" VerticalAlignment="Center"/>
+                        <Button Command="{Binding ComputeCommand}" Style="{StaticResource ActionButton}"
+                                HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                            <TextBlock Text="Run" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Command="{Binding SaveProtocolCommand}" Style="{StaticResource SecondaryButton}" 
-                                HorizontalAlignment="Stretch" Margin="0,0,0,8">
-                            <TextBlock Text="Save Protocol" FontSize="14" VerticalAlignment="Center"/>
+                        <Button Command="{Binding SaveProtocolCommand}" Style="{StaticResource SecondaryButton}"
+                                HorizontalAlignment="Stretch" Margin="0,0,0,4">
+                            <TextBlock Text="Save Protocol" VerticalAlignment="Center"/>
                         </Button>
-                        <TextBlock Text="{Binding Status}" Foreground="#FFF2F2F5" FontSize="12" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding Status}" Style="{StaticResource StatusText}"/>
                     </StackPanel>
                 </Border>
                 <Border Style="{StaticResource ResultCard}" VerticalAlignment="Stretch">
@@ -82,8 +82,9 @@
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0" Text="Result X" Style="{StaticResource SectionHeader}"/>
                         <TextBox Grid.Row="1" Text="{Binding ResultText, Mode=OneWay}" IsReadOnly="True"
-                                 Style="{StaticResource InputTextBox}" Foreground="#FFFFFF"
-                                 MinHeight="100" VerticalScrollBarVisibility="Auto" 
+                                 Style="{StaticResource InputTextBox}"
+                                 Tag="вектор X з'явиться тут"
+                                 MinHeight="100" VerticalScrollBarVisibility="Auto"
                                  VerticalAlignment="Stretch" Margin="0,4,0,0"/>
                     </Grid>
                 </Border>
