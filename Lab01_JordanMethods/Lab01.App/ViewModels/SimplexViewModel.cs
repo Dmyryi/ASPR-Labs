@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -116,10 +117,11 @@ public class SimplexViewModel : ViewModelBase
                 : "Minimization solved.";
         }
 
-        void ApplyError(string message)
+        void ApplyError(Exception ex)
         {
-            Status = "Error: " + message;
-            ResultText = string.Empty;
+            string detail = FormatExceptionDetail(ex);
+            Status = "Error — see result panel below.";
+            ResultText = detail;
             _lastProtocol = null;
         }
 
@@ -196,10 +198,25 @@ public class SimplexViewModel : ViewModelBase
         {
             Dispatcher? ui = Application.Current?.Dispatcher;
             if (ui is not null)
-                await ui.InvokeAsync(() => ApplyError(ex.Message));
+                await ui.InvokeAsync(() => ApplyError(ex));
             else
-                ApplyError(ex.Message);
+                ApplyError(ex);
         }
+    }
+
+    private static string FormatExceptionDetail(Exception ex)
+    {
+        var sb = new StringBuilder();
+        int depth = 0;
+        for (Exception? e = ex; e != null; e = e.InnerException)
+        {
+            if (depth > 0)
+                sb.AppendLine().AppendLine("— — —").AppendLine();
+            sb.Append(e.Message);
+            depth++;
+        }
+
+        return sb.Length > 0 ? sb.ToString() : ex.ToString();
     }
 
     private sealed record SimplexSolvePayload(SolverResult Result, SimplexProtocol Protocol);
