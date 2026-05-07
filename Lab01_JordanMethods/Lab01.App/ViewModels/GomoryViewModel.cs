@@ -28,7 +28,6 @@ public sealed class GomoryViewModel : ViewModelBase
     private string _resultText = string.Empty;
     private string _status = string.Empty;
     private string? _lastProtocol;
-    private int _maxCuts = 30;
 
     public GomoryViewModel(
         ILinearProgramParser parser,
@@ -74,24 +73,17 @@ public sealed class GomoryViewModel : ViewModelBase
         set { _status = value; OnPropertyChanged(); }
     }
 
-    public int MaxCuts
-    {
-        get => _maxCuts;
-        set { _maxCuts = value; OnPropertyChanged(); }
-    }
-
     private async void SolveAsync(OptimizationMode mode)
     {
         Status = "Обчислення… (інтерфейс не блокується)";
 
         string objectiveSnapshot = ObjectiveText;
         string constraintsSnapshot = ConstraintsText;
-        var gomoryOptions = new GomoryOptions { MaxCuts = Math.Max(1, _maxCuts) };
 
         try
         {
             SolveOutput payload = await Task.Run(() =>
-                Solve(objectiveSnapshot, constraintsSnapshot, mode, gomoryOptions))
+                Solve(objectiveSnapshot, constraintsSnapshot, mode))
                 .ConfigureAwait(false);
 
             await DispatchAsync(() =>
@@ -120,8 +112,7 @@ public sealed class GomoryViewModel : ViewModelBase
     private SolveOutput Solve(
         string objectiveText,
         string constraintsText,
-        OptimizationMode mode,
-        GomoryOptions gomoryOptions)
+        OptimizationMode mode)
     {
         LinearProgram program = _parser.Parse(objectiveText, constraintsText);
 
@@ -130,7 +121,7 @@ public sealed class GomoryViewModel : ViewModelBase
 
         double[] vectorZ = BuildObjectiveVector(program.ObjectiveCoefficients, mode);
         SolverResult result = _solver.Solve(
-            vectorZ, program.ConstraintMatrix, program.RightHandSide, mode, gomoryOptions, protocol);
+            vectorZ, program.ConstraintMatrix, program.RightHandSide, mode, options: null, protocol);
 
         return new SolveOutput(result, protocol.GetText());
     }

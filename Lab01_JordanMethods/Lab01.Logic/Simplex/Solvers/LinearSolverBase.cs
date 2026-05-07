@@ -3,10 +3,6 @@ using Lab01.Logic.Models;
 
 namespace Lab01.Logic.Simplex.Solvers;
 
-/// <summary>
-/// Базова реалізація лінійного солвера: задає каркас «опорний → оптимальний»
-/// та інкапсулює спільні дії підготовки таблиці й вилучення результатів.
-/// </summary>
 public abstract class LinearSolverBase : ILinearSolver
 {
     protected IBasicSolutionFinder BasicFinder { get; }

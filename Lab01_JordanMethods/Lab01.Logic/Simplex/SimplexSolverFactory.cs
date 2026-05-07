@@ -5,10 +5,6 @@ using Lab01.Logic.Simplex.Stages;
 
 namespace Lab01.Logic.Simplex;
 
-/// <summary>
-/// Фабрика, що збирає повний граф залежностей симплекс-солвера для одного запуску
-/// (свіжий протокол на кожен виклик), приховуючи деталі компоновки від ViewModel.
-/// </summary>
 public sealed class SimplexSolverFactory : ISimplexSolverFactory
 {
     private readonly IJordan _jordan;

@@ -32,7 +32,7 @@
         </DataTemplate>
     </Window.Resources>
 
-    <!-- Зовнішня тінь і скруглені кути -->
+    
     <Grid Margin="20">
         <Grid.Effect>
             <DropShadowEffect Color="#000000" BlurRadius="40" ShadowDepth="0" Opacity="0.55"/>
@@ -46,7 +46,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- ===================== ТОПБАР ===================== -->
+                
                 <Border Grid.Row="0" Padding="22,14" CornerRadius="22,22,0,0"
                         MouseLeftButtonDown="TopBar_OnMouseLeftButtonDown"
                         Background="{StaticResource TopBarScrim}">
@@ -90,7 +90,7 @@
                     </Grid>
                 </Border>
 
-                <!-- ===================== ОСНОВНА ОБЛАСТЬ ===================== -->
+                
                 <Border Grid.Row="1" Background="{StaticResource ContentScrim}" Padding="22,16,22,22">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -98,7 +98,7 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Pill-таби між модулями -->
+                        
                         <TabControl Grid.Row="0" Grid.RowSpan="2"
                                     Style="{StaticResource PillTabControl}"
                                     ItemContainerStyle="{StaticResource PillTabItem}">
@@ -109,7 +109,7 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <!-- Бічне меню -->
+                                    
                                     <Border Grid.Column="0" Background="{StaticResource CardSurface}"
                                             BorderBrush="{StaticResource CardStroke}" BorderThickness="1"
                                             CornerRadius="18" Padding="12,16" VerticalAlignment="Stretch"

@@ -1,4 +1,4 @@
-﻿namespace Lab01.Logic.Simplex;
+namespace Lab01.Logic.Simplex;
 
 public enum OptimizationMode
 {

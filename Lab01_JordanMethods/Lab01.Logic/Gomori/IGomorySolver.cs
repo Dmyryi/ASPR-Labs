@@ -6,10 +6,6 @@ namespace Lab01.Logic.Gomori;
 
 public interface IGomorySolver
 {
-    /// <summary>
-    /// Розв'язує цілочислову задачу лінійного програмування методом Гоморі.
-    /// Передбачається, що всі змінні задачі мають бути цілими ≥ 0.
-    /// </summary>
     SolverResult Solve(
         double[] vectorZ,
         double[,] matrixA,

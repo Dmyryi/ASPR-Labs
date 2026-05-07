@@ -3,10 +3,6 @@ using System.Windows.Data;
 
 namespace Lab01.App.Converters;
 
-/// <summary>
-/// Повертає <c>true</c>, якщо значення (наприклад, SelectedIndex) дорівнює числу,
-/// що передане у параметрі. Використовується для підсвічування активного пункту меню.
-/// </summary>
 public sealed class IndexEqualsConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

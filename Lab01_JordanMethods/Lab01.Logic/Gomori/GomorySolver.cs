@@ -6,11 +6,7 @@ using Lab01.Logic.Simplex.Stages;
 
 namespace Lab01.Logic.Gomori;
 
-/// <summary>
-/// Перший алгоритм Гоморі (рис. 4.1): розв'язує LP симплекс-методом, потім ітеративно
-/// додає відсічення для дробової базисної змінної з найбільшою дробовою частиною,
-/// поки всі базисні оригінальні змінні не стануть цілими або не вичерпається ліміт.
-/// </summary>
+
 public sealed class GomorySolver : IGomorySolver
 {
     private const string Stage = "пошук цілочислового розв'язку (Гоморі)";
@@ -73,9 +69,7 @@ public sealed class GomorySolver : IGomorySolver
         throw new IterationLimitExceededException(gomoryOptions.MaxCuts, Stage);
     }
 
-    /// <summary>
-    /// Опорний → оптимальний LP; після кожної фази друкується поточний неперервний оптимум (формат методички).
-    /// </summary>
+
     private void SolveLpPhase(
         SimplexTableau tableau,
         ISimplexProtocol? protocol,

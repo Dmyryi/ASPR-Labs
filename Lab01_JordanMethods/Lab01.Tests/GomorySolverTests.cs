@@ -23,12 +23,6 @@ public class GomorySolverTests
         _solver = new GomorySolver(new JordanSolver(), new PivotSelector());
     }
 
-    /// <summary>
-    /// Тестовий приклад 1 з методички (Гоморі):
-    /// Z = x1 + 4x2 -> max,  2x1 + x2 ≤ 6,  x1 + 3x2 ≤ 4,  x_j ≥ 0 цілі.
-    /// LP-оптимум: X=(0; 4/3), Z=16/3 ≈ 5.33.
-    /// Цілочисловий оптимум: X=(1; 1), Z=5.
-    /// </summary>
     [Fact]
     public void TextbookExample_Maximization_X_1_1_Z_5()
     {
@@ -45,13 +39,9 @@ public class GomorySolverTests
         AssertSolution(expectedX, expectedZ, result);
     }
 
-    /// <summary>
-    /// Якщо LP-оптимум уже цілий — Гоморі повертає його без жодного відсічення.
-    /// </summary>
     [Fact]
     public void IntegerLpOptimum_ReturnsImmediately()
     {
-        // Z = x1 + x2 -> max, x1 ≤ 3, x2 ≤ 2  (LP-оптимум одразу X=(3;2), Z=5)
         double[] vectorZ = { -1, -1 };
         double[,] matrixA = { { 1, 0 }, { 0, 1 } };
         double[] vectorB = { 3, 2 };
@@ -63,11 +53,6 @@ public class GomorySolverTests
         Assert.Equal(5d, result.Z, Precision);
     }
 
-    /// <summary>
-    /// Задача з дробовим LP-оптимумом: Z = 8x1 + 5x2 -> max, x1+x2 ≤ 6, 9x1+5x2 ≤ 45.
-    /// LP-оптимум: X=(15/4; 9/4), Z=41.25.  Цілочисловий оптимум: X=(5; 0), Z=40
-    /// (перевіряється вручну: 9·5 = 45 ≤ 45, ціль Z=40, інші цілі точки дають менше).
-    /// </summary>
     [Fact]
     public void DakinExample_Maximization_X_5_0_Z_40()
     {

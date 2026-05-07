@@ -1,4 +1,4 @@
-﻿using Lab01.Logic.Interfaces;
+using Lab01.Logic.Interfaces;
 
 namespace Lab01.Logic;
 

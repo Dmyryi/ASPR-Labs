@@ -1,4 +1,4 @@
-﻿using Lab01.Logic.Interfaces;
+using Lab01.Logic.Interfaces;
 using Lab01.Logic.Interfaces.IBasicLogic;
 
 namespace Lab01.Logic.BasicLogic;

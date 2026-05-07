@@ -4,10 +4,6 @@ using Lab01.Logic.Models;
 
 namespace Lab01.Logic.Simplex.Stages;
 
-/// <summary>
-/// Пошук опорного розв’язку: ітеративно усуває від’ємні b_i модифікованим
-/// жордановим виключенням, поки всі вільні члени не стануть невід’ємними.
-/// </summary>
 public sealed class BasicSolutionFinder : IBasicSolutionFinder
 {
     private const string Stage = "пошук опорного розв’язку";

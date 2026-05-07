@@ -4,11 +4,6 @@ using Lab01.Logic.Models;
 
 namespace Lab01.Logic.Simplex.Stages;
 
-/// <summary>
-/// Усунення нуль-рядків симплекс-таблиці за алгоритмом рис. 3.2:
-/// для кожного рядка з b_i = 0 шукаємо додатний коефіцієнт як розв’язувальний,
-/// виконуємо модифіковане ЖВ та викреслюємо стовпець нулів.
-/// </summary>
 public sealed class ZeroRowEliminator : IZeroRowEliminator
 {
     private readonly IJordan _jordan;

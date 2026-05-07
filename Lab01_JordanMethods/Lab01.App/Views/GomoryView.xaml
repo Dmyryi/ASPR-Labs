@@ -75,20 +75,6 @@
                     <StackPanel Margin="0,4,0,0">
                         <Border Style="{StaticResource SmallCard}" Margin="0,0,0,16">
                             <StackPanel>
-                                <TextBlock Text="Options" Style="{StaticResource SectionHeader}"/>
-                                <Grid Margin="0,0,0,16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="Ліміт відсічень"
-                                               Style="{StaticResource LabelText}" Margin="0" VerticalAlignment="Center"/>
-                                    <TextBox Grid.Column="1"
-                                             Text="{Binding MaxCuts, UpdateSourceTrigger=PropertyChanged}"
-                                             Style="{StaticResource InputTextBox}"
-                                             Width="80" MinHeight="36" Padding="10,8"
-                                             HorizontalContentAlignment="Center"/>
-                                </Grid>
                                 <TextBlock Text="Actions" Style="{StaticResource SectionHeader}"/>
                                 <Button Command="{Binding SolveMaxCommand}" Style="{StaticResource ActionButton}"
                                         HorizontalAlignment="Stretch" Margin="0,0,0,10">

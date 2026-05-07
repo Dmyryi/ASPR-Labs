@@ -1,12 +1,8 @@
-﻿using Lab01.Logic.Interfaces;
+using Lab01.Logic.Interfaces;
 using Lab01.Logic.Models;
 
 namespace Lab01.Logic.Simplex;
 
-/// <summary>
-/// Контекст стратегії: тримає поточний <see cref="ILinearSolver"/> і делегує йому виклик.
-/// Дозволяє підмінити стратегію без зміни клієнтського коду.
-/// </summary>
 public sealed class SimplexContext
 {
     private ILinearSolver? _solver;

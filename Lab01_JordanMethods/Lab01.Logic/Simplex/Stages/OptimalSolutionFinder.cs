@@ -4,10 +4,6 @@ using Lab01.Logic.Models;
 
 namespace Lab01.Logic.Simplex.Stages;
 
-/// <summary>
-/// Пошук оптимального розв’язку від заданого опорного: на кожному кроці обирає
-/// розв’язувальний стовпець за оцінками рядка Z і виконує модифіковане ЖВ.
-/// </summary>
 public sealed class OptimalSolutionFinder : IOptimalSolution
 {
     private const string Stage = "пошук оптимального розв’язку";

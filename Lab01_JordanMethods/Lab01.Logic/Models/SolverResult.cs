@@ -1,4 +1,4 @@
-﻿namespace Lab01.Logic.Models;
+namespace Lab01.Logic.Models;
 
 public sealed class SolverResult
 {

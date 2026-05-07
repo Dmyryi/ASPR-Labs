@@ -1,4 +1,4 @@
-﻿namespace Lab01.Logic.Interfaces.IBasicLogic;
+namespace Lab01.Logic.Interfaces.IBasicLogic;
 
 public interface IRankCalculator
 {

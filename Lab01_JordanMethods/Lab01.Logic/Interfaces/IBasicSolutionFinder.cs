@@ -1,4 +1,4 @@
-﻿using Lab01.Logic.Models;
+using Lab01.Logic.Models;
 
 namespace Lab01.Logic.Interfaces;
 

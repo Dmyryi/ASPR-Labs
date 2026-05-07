@@ -5,12 +5,6 @@ using Lab01.Logic.Models;
 
 namespace Lab01.Logic.Simplex.Parsing;
 
-/// <summary>
-/// Парсер текстової постановки задачі лінійного програмування.
-/// Формати: цільова функція "x1 + 2x2 - x3", обмеження "x1 + 2x2 &lt;= 6" (одне на рядок).
-/// Усі обмеження приводяться до канонічного вигляду A·x ≤ b
-/// (≥ перевертається помноженням на -1, = розкладається на ≤ і ≥).
-/// </summary>
 public sealed class LinearProgramParser : ILinearProgramParser
 {
     private static readonly Regex VariableRegex =

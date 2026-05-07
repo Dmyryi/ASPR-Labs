@@ -1,4 +1,4 @@
-﻿namespace Lab01.Logic.Interfaces;
+namespace Lab01.Logic.Interfaces;
 
 public interface IJordan
 {

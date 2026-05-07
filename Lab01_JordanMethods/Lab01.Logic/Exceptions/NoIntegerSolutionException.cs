@@ -1,9 +1,5 @@
 namespace Lab01.Logic.Exceptions;
 
-/// <summary>
-/// Кинуто, коли метод Гоморі не знайшов цілочислового розв'язку
-/// (рядок із дробовим b не має дробових коефіцієнтів — відсічення збудувати неможливо).
-/// </summary>
 public sealed class NoIntegerSolutionException : SimplexException
 {
     public NoIntegerSolutionException()

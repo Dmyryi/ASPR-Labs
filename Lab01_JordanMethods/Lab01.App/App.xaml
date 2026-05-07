@@ -6,7 +6,7 @@
     <Application.Resources>
         <conv:IndexEqualsConverter x:Key="IndexEquals"/>
 
-        <!-- ===================== ПАЛІТРА ===================== -->
+        
         <SolidColorBrush x:Key="TextPrimary"   Color="#FFFFFFFF"/>
         <SolidColorBrush x:Key="TextSecondary" Color="#FFC8CAD0"/>
         <SolidColorBrush x:Key="TextMuted"     Color="#FF90939B"/>
@@ -42,7 +42,7 @@
         <FontFamily x:Key="UiFont">Segoe UI Variable Display, Segoe UI, Inter</FontFamily>
         <FontFamily x:Key="MonoFont">Cascadia Mono, Consolas, Courier New</FontFamily>
 
-        <!-- ===================== ТИПОГРАФІКА ===================== -->
+        
         <Style x:Key="TitleText" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="{StaticResource UiFont}"/>
             <Setter Property="FontSize" Value="28"/>
@@ -96,7 +96,7 @@
             <Setter Property="Margin" Value="0,4,0,0"/>
         </Style>
 
-        <!-- ===================== КАРТКИ ===================== -->
+        
         <Style x:Key="CardBorder" TargetType="Border">
             <Setter Property="Background" Value="{StaticResource CardSurface}"/>
             <Setter Property="BorderBrush" Value="{StaticResource CardStroke}"/>
@@ -124,7 +124,7 @@
             <Setter Property="Padding" Value="22"/>
         </Style>
 
-        <!-- ===================== КНОПКИ ===================== -->
+        
         <Style x:Key="ActionButton" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource ButtonPrimary}"/>
             <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
@@ -191,7 +191,7 @@
             </Setter>
         </Style>
 
-        <!-- ===================== INPUT ===================== -->
+        
         <Style x:Key="InputTextBox" TargetType="TextBox">
             <Setter Property="Background" Value="{StaticResource InputSurface}"/>
             <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
@@ -248,7 +248,7 @@
             </Setter>
         </Style>
 
-        <!-- ===================== CHECKBOX ===================== -->
+        
         <Style x:Key="ModernCheckBox" TargetType="CheckBox">
             <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
             <Setter Property="FontFamily" Value="{StaticResource UiFont}"/>
@@ -286,7 +286,7 @@
             </Setter>
         </Style>
 
-        <!-- ===================== SCROLLBAR (тонкий) ===================== -->
+        
         <Style x:Key="ThinScrollBarThumb" TargetType="Thumb">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
             <Setter Property="Template">
@@ -335,7 +335,7 @@
             </Style.Triggers>
         </Style>
 
-        <!-- ===================== TABCONTROL (pill-стиль) ===================== -->
+        
         <Style x:Key="PillTabControl" TargetType="TabControl">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -391,7 +391,7 @@
             </Setter>
         </Style>
 
-        <!-- ===================== CHROME-КНОПКИ ВІКНА ===================== -->
+        
         <Style x:Key="WindowChromeButton" TargetType="Button">
             <Setter Property="Width" Value="36"/>
             <Setter Property="Height" Value="36"/>
@@ -435,7 +435,7 @@
             </Setter>
         </Style>
 
-        <!-- ===================== БІЧНЕ МЕНЮ (єдиний стиль) ===================== -->
+        
         <Style x:Key="SidebarItem" TargetType="Button">
             <Setter Property="Height" Value="50"/>
             <Setter Property="Margin" Value="0,4,0,4"/>

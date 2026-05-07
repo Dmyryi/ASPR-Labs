@@ -1,9 +1,6 @@
-﻿namespace Lab01.Logic.Models;
+namespace Lab01.Logic.Models;
 
-/// <summary>
-/// Симплекс-таблиця: матриця коефіцієнтів обмежень, вектор b у крайньому стовпці
-/// та рядок цільової функції Z унизу. Зберігає базисні та небазисні змінні.
-/// </summary>
+
 public sealed class SimplexTableau
 {
     private const double Epsilon = 1e-9;
@@ -61,10 +58,6 @@ public sealed class SimplexTableau
 
     public void Update(double[,] newData) => Data = newData;
 
-    /// <summary>
-    /// Викреслити стовпець із таблиці після появи стовпця нулів у рядках обмежень
-    /// (крок алгоритму усунення нуль-рядків, рис. 3.2).
-    /// </summary>
     public void RemoveConstraintColumn(int colIndex)
     {
         if ((uint)colIndex >= (uint)ColsCount)
@@ -96,10 +89,7 @@ public sealed class SimplexTableau
         ColumnVariables = newColumnVars;
     }
 
-    /// <summary>
-    /// Додає новий рядок-обмеження до таблиці (наприклад, відсічення Гоморі).
-    /// Структура зберігається: рядок Z залишається останнім, b — у крайньому стовпці.
-    /// </summary>
+   
     public void AppendBasisRow(double[] rowCoefficients, double rhs, int newBasisVariableId)
     {
         if (rowCoefficients is null) throw new ArgumentNullException(nameof(rowCoefficients));

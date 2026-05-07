@@ -236,9 +236,6 @@ public sealed class SimplexProtocol : ISimplexProtocol
     private string FormatColLabel(SimplexTableau tableau, int col) =>
         "-" + FormatStructuralName(tableau.ColumnVariables[col], tableau);
 
-    /// <summary>
-    /// Ім’я структурної змінної в рядку/стовпці без префікса «-».
-    /// </summary>
     private string FormatStructuralName(int id, SimplexTableau tableau)
     {
         if (_gomoryMode)
