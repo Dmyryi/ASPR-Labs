@@ -4,15 +4,7 @@ using Lab01.Logic.Models;
 
 namespace Lab01.Logic.Simplex
 {
-    /// <summary>
-    /// Усунення нуль-рядків симплекс-таблиці за алгоритмом рис. 3.2:
-    /// 1) шукаємо рядок з b_i = 0;
-    /// 2) у ньому шукаємо додатний елемент → розв'язувальний стовпець;
-    /// 3) якщо такого немає — система суперечлива;
-    /// 4) проводимо МЖВ навколо (зеро-рядок, розв'язувальний стовпець);
-    /// 5) викреслюємо цей стовпець із симплекс-таблиці;
-    /// 6) повторюємо, поки залишаються нуль-рядки.
-    /// </summary>
+  
     public sealed class ZeroRowElliminator : IZeroRowElliminator
     {
         private const double Eps = 1e-10;
@@ -28,7 +20,7 @@ namespace Lab01.Logic.Simplex
 
         public void Elliminate(SimplexTableau tableau)
         {
-            _protocol?.LogSection("Усунення нуль-рядків (алгоритм рис. 3.2):");
+            _protocol?.LogSection("Усунення нуль-рядків:");
             int step = 1;
 
             while (true)

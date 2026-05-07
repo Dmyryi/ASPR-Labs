@@ -80,7 +80,6 @@ namespace Lab01.Logic.Models
 
         public void Update(double[,] newData) => Data = newData;
 
-        /// <summary>Викреслити стовпець із таблиці (рис. 3.2 після МЖВ, якщо з’явився стовпець нулів у рядках обмежень).</summary>
         public void RemoveConstraintColumn(int colIndex)
         {
             if ((uint)colIndex >= (uint)ColsCount)

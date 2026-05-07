@@ -24,7 +24,6 @@ public class MaximizationSolver : ILinearSolver
     {
         var tableau = new SimplexTableau(matrixA, vectorB, vectorZ);
 
-        // Алгоритм рис. 3.1: спочатку усуваємо 0-рядки, потім шукаємо опорний і далі оптимальний розв'язок.
         if (_useZeroRowElimination)
             _zeroRowElliminator?.Elliminate(tableau);
 

@@ -355,9 +355,8 @@ public class SimplexViewModel : ViewModelBase
             coefficients[variableIndex] = coefficients.GetValueOrDefault(variableIndex) + val;
         }
 
-        // 2. Видаляємо змінні з рядка, щоб знайти вільні константи
         string leftover = varRegex.Replace(normalized, "|");
-        // Використовуємо роздільник |, щоб числа не злилися (напр. "1-2" не стало "12")
+
 
         var constRegex = new Regex(@"([+\-]?\d+(?:\.\d+)?)", RegexOptions.Compiled);
         var constMatches = constRegex.Matches(leftover);

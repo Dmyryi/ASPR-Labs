@@ -27,14 +27,12 @@ namespace Lab01.Tests
         [Fact]
         public void Task1_Maximization_WithZeroRowElimination_ReturnsExpectedSolution()
         {
-            // Целевая функция Z = x1 + 2x2 + x3 + 0*x4 -> max
-            double[] vectorZ = { -1, -2, -1, 0 }; // Знаки для максимизации
+            double[] vectorZ = { -1, -2, -1, 0 };
 
-            // Матрица коэффициентов (только x1, x2, x3, x4)
             double[,] matrixA = {
-    { 2, -1, 3, 4 }, // Ур-е 1
-    { 1,  1, 1, -1 }, // Ур-е 2
-    { 1,  2, 2, 4 }   // Ур-е 3
+    { 2, -1, 3, 4 }, 
+    { 1,  1, 1, -1 },
+    { 1,  2, 2, 4 }   
 };
 
             double[] vectorB = { 10, 5, 12 };
@@ -196,10 +194,9 @@ namespace Lab01.Tests
             var parsedConstraints = ParseConstraints(constraints);
 
             Assert.Equal(4, parsedObjective.Count);
-            // 2 рівності ×2 (<= і >=) + 1 × <= + 1 × >= = 6 рядків після розкриття «=»
+
             Assert.Equal(6, parsedConstraints.Count);
 
-            // Давайте посмотрим на реальные данные после парсинга
             _output.WriteLine("=== PARSED OBJECTIVE ===");
             foreach (var (var, coeff) in parsedObjective)
                 _output.WriteLine($"x{var}: {coeff}");
@@ -215,10 +212,7 @@ namespace Lab01.Tests
             }
         }
 
-        /// <summary>
-        /// Постановка задачі 1 з підручника: Z = 10x1 - x2 - 42x3 - 52x4 → max, початкова таблиця як на рисунку.
-        /// Кінцевий оптимум з методички: Max Z = 21, X = (9; 17; 0; 1).
-        /// </summary>
+
         [Fact]
         public void Example1_FromImage_WithoutZeroRowElimination_MatchesTextbookOptimum()
         {
@@ -249,9 +243,7 @@ namespace Lab01.Tests
             Assert.Equal(expectedZ, result.Z, Precision);
         }
 
-        /// <summary>
-        /// Те саме, що приклад 1, але з кроком усунення 0-рядків (рис. 3.2) — оптимум має лишатись тим самим.
-        /// </summary>
+     
         [Fact]
         public void Example1_FromImage_WithZeroRowElimination_MatchesTextbookOptimum()
         {
@@ -282,10 +274,6 @@ namespace Lab01.Tests
             Assert.Equal(expectedZ, result.Z, Precision);
         }
 
-        /// <summary>
-        /// Постановка задачі 2: Z = -3x1 + 6x2 → max при п’яти обмеженнях ≥ 0 (вільні x1, x2 у підручнику — тут як у прикладі з додатку).
-        /// Кінцевий оптимум: Max Z = 15, X = (3; 4).
-        /// </summary>
         [Fact]
         public void Example2_Textbook_Image_MatchesOptimum_Z15_X3_4()
         {
