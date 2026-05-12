@@ -16,12 +16,18 @@ public sealed class SimplexProtocol : ISimplexProtocol
     private int _originalConstraintCount;
     private OptimizationMode _optimizationMode;
     private SimplexProtocolStyle _protocolStyle;
+    private LinearProgram? _canonicalProgram;
+    private bool _dualStatementLogged;
+    private bool _useTextbookTableLabels;
 
     public void Start(OptimizationMode mode, string objective, string constraints, LinearProgram? canonicalProgram = null, SimplexProtocolStyle style = SimplexProtocolStyle.PrimalZ)
     {
         _gomoryMode = false;
         _optimizationMode = mode;
         _protocolStyle = style;
+        _canonicalProgram = style == SimplexProtocolStyle.PrimalZ ? canonicalProgram : null;
+        _dualStatementLogged = false;
+        _useTextbookTableLabels = style == SimplexProtocolStyle.PrimalZ;
 
         _sb.Clear();
         _sb.AppendLine("Згенерований протокол обчислення:");
@@ -35,7 +41,7 @@ public sealed class SimplexProtocol : ISimplexProtocol
         }
         else
         {
-            _sb.AppendLine("Постановка задачі:");
+            _sb.AppendLine("Постановка прямої задачі:");
             _sb.AppendLine();
             _sb.AppendLine($"Z = {objective}  ->  {(mode == OptimizationMode.Maximization ? "max" : "min")}");
         }
@@ -47,6 +53,7 @@ public sealed class SimplexProtocol : ISimplexProtocol
 
         if (canonicalProgram is not null && style == SimplexProtocolStyle.PrimalZ)
         {
+            _sb.AppendLine($"x_j ≥ 0, j = 1,{canonicalProgram.VariableCount}.");
             _sb.AppendLine();
             _sb.AppendLine("Перепишемо систему обмежень прямої задачі:");
             _sb.AppendLine();
@@ -54,10 +61,7 @@ public sealed class SimplexProtocol : ISimplexProtocol
         }
 
         _sb.AppendLine();
-        if (style == SimplexProtocolStyle.DualW)
-            _sb.AppendLine("Вхідна симплекс-таблиця для пари взаємно двоїстих задач:");
-        else
-            _sb.AppendLine("Вхідна симплекс-таблиця:");
+        _sb.AppendLine("Вхідна симплекс-таблиця для пари взаємно двоїстих задач:");
         _sb.AppendLine();
     }
 
@@ -68,6 +72,9 @@ public sealed class SimplexProtocol : ISimplexProtocol
         _gomoryMode = true;
         _protocolStyle = SimplexProtocolStyle.PrimalZ;
         _optimizationMode = mode;
+        _canonicalProgram = null;
+        _dualStatementLogged = true;
+        _useTextbookTableLabels = false;
         _problemVariableCount = program.VariableCount;
         _originalConstraintCount = program.ConstraintCount;
 
@@ -114,7 +121,14 @@ public sealed class SimplexProtocol : ISimplexProtocol
         }
     }
 
-    public void LogInitialTableau(SimplexTableau tableau) => WriteTableau(tableau);
+    public void LogInitialTableau(SimplexTableau tableau)
+    {
+        WriteTableau(tableau);
+        if (_dualStatementLogged) return;
+        _dualStatementLogged = true;
+        if (_canonicalProgram is not null && _protocolStyle == SimplexProtocolStyle.PrimalZ && _optimizationMode == OptimizationMode.Maximization)
+            WriteDualProblemStatement(_canonicalProgram);
+    }
 
     public void LogSection(string title)
     {
@@ -126,7 +140,7 @@ public sealed class SimplexProtocol : ISimplexProtocol
 
     public void LogPivot(int? step, SimplexTableau tableau, int pivotRow, int pivotCol)
     {
-        if (step.HasValue)
+        if (step.HasValue && !_useTextbookTableLabels)
             _sb.AppendLine($"Крок #{step}:");
 
         _sb.AppendLine($"Розв’язувальний рядок:    {FormatRowLabel(tableau, pivotRow)}");
@@ -303,49 +317,118 @@ public sealed class SimplexProtocol : ISimplexProtocol
         return string.Join("; ", x.Select(Format));
     }
 
+    private void WriteDualProblemStatement(LinearProgram p)
+    {
+        if (_optimizationMode != OptimizationMode.Maximization) return;
+
+        int m = p.ConstraintCount;
+        int n = p.VariableCount;
+
+        _sb.AppendLine();
+        _sb.AppendLine("Постановка двоїстої задачі:");
+        _sb.AppendLine();
+
+        var wParts = new List<string>(m);
+        for (int i = 0; i < m; i++)
+            wParts.Add($"{Format(p.RightHandSide[i])} * u{i + 1}");
+
+        _sb.AppendLine($"W = {string.Join(" + ", wParts)}  ->  min");
+        _sb.AppendLine();
+        _sb.AppendLine("при обмеженнях:");
+
+        for (int j = 0; j < n; j++)
+        {
+            var parts = new List<string>();
+            for (int i = 0; i < m; i++)
+            {
+                double aij = p.ConstraintMatrix[i, j];
+                if (Math.Abs(aij) < 1e-12) continue;
+                parts.Add($"{Format(aij)} * u{i + 1}");
+            }
+
+            parts.Add(Format(-p.ObjectiveCoefficients[j]));
+            _sb.AppendLine($"v{j + 1} = {string.Join(" + ", parts)} ≥ 0");
+        }
+
+        _sb.AppendLine();
+        _sb.AppendLine($"u_j ≥ 0, j = 1,{m}.");
+        _sb.AppendLine();
+    }
+
     private void WriteTableau(SimplexTableau tableau)
     {
         var colLabels = Enumerable.Range(0, tableau.ColsCount)
             .Select(c => FormatColLabel(tableau, c)).ToArray();
 
+        string zLabel = _useTextbookTableLabels ? "1  Z" : "Z";
         int maxLabelWidth = Math.Max(
             2,
             Enumerable.Range(0, tableau.RowsCount)
                 .Select(r => FormatRowLabel(tableau, r).Length)
                 .DefaultIfEmpty(0).Max());
 
-        maxLabelWidth = Math.Max(maxLabelWidth, "Z".Length);
+        maxLabelWidth = Math.Max(maxLabelWidth, zLabel.Length);
+
+        int colWidth = Math.Max(8, colLabels.Length > 0 ? colLabels.Max(l => l.Length) : 8);
+        string rhsHeader = _useTextbookTableLabels ? "W, 1" : "1";
+        int rhsColW = Math.Max(colWidth, rhsHeader.Length);
 
         _sb.Append(' ', maxLabelWidth).Append(" = ");
         foreach (var label in colLabels)
-            _sb.Append(label.PadLeft(8));
-        _sb.Append("   ").Append("1".PadLeft(8));
+            _sb.Append(label.PadLeft(colWidth));
+        _sb.Append("   ").Append(rhsHeader.PadLeft(rhsColW));
         _sb.AppendLine();
-        _sb.AppendLine(new string('-', maxLabelWidth + 3 + (colLabels.Length + 1) * 8));
+        _sb.AppendLine(new string('-', maxLabelWidth + 3 + colLabels.Length * colWidth + 3 + rhsColW));
 
         for (int r = 0; r < tableau.RowsCount; r++)
         {
             _sb.Append(FormatRowLabel(tableau, r).PadLeft(maxLabelWidth));
             _sb.Append(" = ");
             for (int c = 0; c < tableau.ColsCount; c++)
-                _sb.Append(Format(tableau.Data[r, c]).PadLeft(8));
-            _sb.Append(Format(tableau.Data[r, tableau.ColsCount]).PadLeft(11));
+                _sb.Append(Format(tableau.Data[r, c]).PadLeft(colWidth));
+            _sb.Append(' ', 3).Append(Format(tableau.Data[r, tableau.ColsCount]).PadLeft(rhsColW));
             _sb.AppendLine();
         }
 
-        _sb.Append("Z".PadLeft(maxLabelWidth)).Append(" = ");
+        _sb.Append(zLabel.PadLeft(maxLabelWidth)).Append(" = ");
         for (int c = 0; c < tableau.ColsCount; c++)
-            _sb.Append(Format(tableau.Data[tableau.RowsCount, c]).PadLeft(8));
-        _sb.Append(Format(tableau.Data[tableau.RowsCount, tableau.ColsCount]).PadLeft(11));
+            _sb.Append(Format(tableau.Data[tableau.RowsCount, c]).PadLeft(colWidth));
+        _sb.Append(' ', 3).Append(Format(tableau.Data[tableau.RowsCount, tableau.ColsCount]).PadLeft(rhsColW));
         _sb.AppendLine();
         _sb.AppendLine();
     }
 
-    private string FormatRowLabel(SimplexTableau tableau, int row) =>
-        FormatStructuralName(tableau.BasisVariables[row], tableau);
+    private string TextbookRowLabel(SimplexTableau tableau, int row)
+    {
+        int id = tableau.BasisVariables[row];
+        int n = tableau.ProblemVariableCount;
+        if (id < n) return $"v{id + 1} x{id + 1}";
+        int k = id - n + 1;
+        return $"u{k} y{k}";
+    }
 
-    private string FormatColLabel(SimplexTableau tableau, int col) =>
-        "-" + FormatStructuralName(tableau.ColumnVariables[col], tableau);
+    private string TextbookColLabel(SimplexTableau tableau, int col)
+    {
+        int id = tableau.ColumnVariables[col];
+        int n = tableau.ProblemVariableCount;
+        if (id < n) return $"v{id + 1}, -x{id + 1}";
+        int k = id - n + 1;
+        return $"u{k}, -y{k}";
+    }
+
+    private string FormatRowLabel(SimplexTableau tableau, int row)
+    {
+        if (_useTextbookTableLabels)
+            return TextbookRowLabel(tableau, row);
+        return FormatStructuralName(tableau.BasisVariables[row], tableau);
+    }
+
+    private string FormatColLabel(SimplexTableau tableau, int col)
+    {
+        if (_useTextbookTableLabels)
+            return TextbookColLabel(tableau, col);
+        return "-" + FormatStructuralName(tableau.ColumnVariables[col], tableau);
+    }
 
     private string FormatStructuralName(int id, SimplexTableau tableau)
     {
