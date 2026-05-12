@@ -6,6 +6,8 @@ public sealed class SolverResult
 
     public double[] Y { get; init; } = Array.Empty<double>();
 
+    public double[] U { get; init; } = Array.Empty<double>();
+
     public double Z { get; init; }
 
     public bool Success { get; init; }

@@ -4,19 +4,27 @@
     <Grid Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,18" Orientation="Horizontal">
-            <TextBlock Text="Simplex Optimization" Style="{StaticResource TitleText}" VerticalAlignment="Center"/>
+        <StackPanel Grid.Row="0" Margin="0,0,0,10" Orientation="Horizontal">
+            <TextBlock Text="{Binding PageTitle}" Style="{StaticResource TitleText}" VerticalAlignment="Center"/>
             <Border Margin="14,0,0,0" Padding="10,4" CornerRadius="8"
                     Background="{StaticResource CardSurface}" BorderBrush="{StaticResource CardStroke}" BorderThickness="1"
                     VerticalAlignment="Center">
-                <TextBlock Text="Min / Max" Style="{StaticResource SubtitleText}" FontWeight="SemiBold" FontSize="13"/>
+                <TextBlock Text="{Binding PageBadge}" Style="{StaticResource SubtitleText}" FontWeight="SemiBold" FontSize="13"/>
             </Border>
         </StackPanel>
 
-        <Grid Grid.Row="1">
+        <Border Grid.Row="1" Margin="0,0,0,14" Padding="14,12" CornerRadius="12"
+                Background="{StaticResource InputSurface}" BorderBrush="{StaticResource AccentTeal}" BorderThickness="1"
+                Visibility="{Binding ContextBannerVisibility}">
+            <TextBlock Text="{Binding ContextBanner}" Style="{StaticResource HintText}" Margin="0"
+                       Foreground="{StaticResource AccentTeal}" FontWeight="SemiBold"/>
+        </Border>
+
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="16"/>
@@ -32,11 +40,11 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="Objective Function Z" Style="{StaticResource SectionHeader}"/>
-                            <TextBlock Grid.Row="1" Text="приклад: x1 + 2x2 - x3 - x4" Style="{StaticResource HintText}"/>
+                            <TextBlock Grid.Row="0" Text="{Binding ObjectiveSectionTitle}" Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Row="1" Text="{Binding ObjectiveHint}" Style="{StaticResource HintText}"/>
                             <TextBox Grid.Row="2" Text="{Binding ObjectiveText, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource InputTextBox}"
-                                     Tag="x1 + 2x2 - x3 - x4"
+                                     Tag="{Binding ObjectiveHint}"
                                      MinHeight="56"/>
                         </Grid>
                     </Border>
@@ -47,32 +55,45 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
 
-                            <Grid Grid.Row="0" Margin="0,0,0,14">
+                            <Button Grid.Row="0" Command="{Binding OpenDualSimplexWindowCommand}"
+                                    Style="{StaticResource SecondaryButton}" Padding="12,8" HorizontalAlignment="Left"
+                                    Margin="0,0,0,12"
+                                    Visibility="{Binding OpenDualButtonVisibility}">
+                                <TextBlock Text="Відкрити вікно двоїстої задачі W" FontWeight="SemiBold" FontSize="12"/>
+                            </Button>
+
+                            <Grid Grid.Row="1" Margin="0,0,0,14"
+                                  Visibility="{Binding PrimalExamplesVisibility}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <Button Grid.Column="0" Command="{Binding LoadExample1Command}"
                                         Style="{StaticResource SecondaryButton}" Padding="12,8">
-                                    <TextBlock Text="Load example 1" FontSize="12"/>
+                                    <TextBlock Text="Задача 1" FontSize="12"/>
                                 </Button>
                                 <Button Grid.Column="2" Command="{Binding LoadExample2Command}"
                                         Style="{StaticResource SecondaryButton}" Padding="12,8">
-                                    <TextBlock Text="Load example 2" FontSize="12"/>
+                                    <TextBlock Text="Задача 2" FontSize="12"/>
+                                </Button>
+                                <Button Grid.Column="4" Command="{Binding LoadVariant10Command}"
+                                        Style="{StaticResource SecondaryButton}" Padding="12,8">
+                                    <TextBlock Text="Варіант 10" FontSize="12"/>
                                 </Button>
                             </Grid>
 
-                            <TextBlock Grid.Row="1" Text="Constraints" Style="{StaticResource SectionHeader}"/>
-                            <TextBlock Grid.Row="2"
-                                       Text="одне на рядок, оператори: &lt;=, &gt;=, =. Приклад: x1 + x2 - x3 - 2x4 &lt;= 6"
-                                       Style="{StaticResource HintText}"/>
-                            <TextBox Grid.Row="3" Text="{Binding ConstraintsText, UpdateSourceTrigger=PropertyChanged}"
+                            <TextBlock Grid.Row="2" Text="Constraints" Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Row="3" Text="{Binding ConstraintsHint}" Style="{StaticResource HintText}"/>
+                            <TextBox Grid.Row="4" Text="{Binding ConstraintsText, UpdateSourceTrigger=PropertyChanged}"
                                      AcceptsReturn="True" Style="{StaticResource InputTextBox}"
-                                     Tag="x1 + x2 - x3 - 2x4 &lt;= 6&#x0a;x1 + x2 + x3 - x4 &gt;= 5&#x0a;2x1 - x2 + 3x3 + 4x4 &lt;= 10"
+                                     Tag="x1 + x2 - x3 - 2x4 &lt;= 6&#x0a;x1 + x2 + x3 - x4 >= 5&#x0a;2x1 - x2 + 3x3 + 4x4 &lt;= 10"
                                      MinHeight="180" VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch"/>
                         </Grid>
                     </Border>
@@ -108,7 +129,7 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="Simplex Result" Style="{StaticResource SectionHeader}"/>
+                                <TextBlock Grid.Row="0" Text="{Binding ResultSectionTitle}" Style="{StaticResource SectionHeader}"/>
                                 <TextBox Grid.Row="1" Text="{Binding ResultText, Mode=OneWay}" IsReadOnly="True"
                                          Style="{StaticResource InputTextBox}"
                                          Tag="результат симплекс-методу"
@@ -141,7 +162,7 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="Simplex Result" Style="{StaticResource SectionHeader}"/>
+                                <TextBlock Grid.Row="0" Text="{Binding ResultSectionTitle}" Style="{StaticResource SectionHeader}"/>
                                 <TextBox Grid.Row="1" Text="{Binding ResultText, Mode=OneWay}" IsReadOnly="True"
                                          Style="{StaticResource InputTextBox}"
                                          Tag="результат симплекс-методу"

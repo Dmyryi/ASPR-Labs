@@ -45,7 +45,12 @@ public partial class App : Application
         services.AddTransient<InverseMatrixViewModel>();
         services.AddTransient<RankViewModel>();
         services.AddTransient<LinearSystemViewModel>();
-        services.AddTransient<SimplexViewModel>();
+        services.AddTransient<SimplexViewModel>(sp =>
+            new SimplexViewModel(
+                sp.GetRequiredService<ILinearProgramParser>(),
+                sp.GetRequiredService<ISimplexSolverFactory>(),
+                sp.GetRequiredService<IProtocolSaver>(),
+                sp));
         services.AddTransient<GomoryViewModel>();
         services.AddTransient<MainViewModel>();
 

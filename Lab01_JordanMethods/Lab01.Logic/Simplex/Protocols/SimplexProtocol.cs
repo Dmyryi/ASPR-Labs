@@ -15,24 +15,49 @@ public sealed class SimplexProtocol : ISimplexProtocol
     private int _problemVariableCount;
     private int _originalConstraintCount;
     private OptimizationMode _optimizationMode;
+    private SimplexProtocolStyle _protocolStyle;
 
-    public void Start(OptimizationMode mode, string objective, string constraints)
+    public void Start(OptimizationMode mode, string objective, string constraints, LinearProgram? canonicalProgram = null, SimplexProtocolStyle style = SimplexProtocolStyle.PrimalZ)
     {
         _gomoryMode = false;
         _optimizationMode = mode;
+        _protocolStyle = style;
 
         _sb.Clear();
         _sb.AppendLine("Згенерований протокол обчислення:");
         _sb.AppendLine();
-        _sb.AppendLine("Постановка задачі:");
-        _sb.AppendLine();
-        _sb.AppendLine($"Z = {objective}  ->  {(mode == OptimizationMode.Maximization ? "max" : "min")}");
+
+        if (style == SimplexProtocolStyle.DualW)
+        {
+            _sb.AppendLine("Постановка двоїстої задачі:");
+            _sb.AppendLine();
+            _sb.AppendLine($"W = {objective}  ->  {(mode == OptimizationMode.Maximization ? "max" : "min")}");
+        }
+        else
+        {
+            _sb.AppendLine("Постановка задачі:");
+            _sb.AppendLine();
+            _sb.AppendLine($"Z = {objective}  ->  {(mode == OptimizationMode.Maximization ? "max" : "min")}");
+        }
+
         _sb.AppendLine();
         _sb.AppendLine("при обмеженнях:");
         foreach (var line in constraints.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries))
             _sb.AppendLine(line.Trim());
+
+        if (canonicalProgram is not null && style == SimplexProtocolStyle.PrimalZ)
+        {
+            _sb.AppendLine();
+            _sb.AppendLine("Перепишемо систему обмежень прямої задачі:");
+            _sb.AppendLine();
+            WriteCanonicalInequalities(canonicalProgram.ConstraintMatrix, canonicalProgram.RightHandSide);
+        }
+
         _sb.AppendLine();
-        _sb.AppendLine("Вхідна симплекс-таблиця:");
+        if (style == SimplexProtocolStyle.DualW)
+            _sb.AppendLine("Вхідна симплекс-таблиця для пари взаємно двоїстих задач:");
+        else
+            _sb.AppendLine("Вхідна симплекс-таблиця:");
         _sb.AppendLine();
     }
 
@@ -41,6 +66,7 @@ public sealed class SimplexProtocol : ISimplexProtocol
         ArgumentNullException.ThrowIfNull(program);
 
         _gomoryMode = true;
+        _protocolStyle = SimplexProtocolStyle.PrimalZ;
         _optimizationMode = mode;
         _problemVariableCount = program.VariableCount;
         _originalConstraintCount = program.ConstraintCount;
@@ -105,7 +131,6 @@ public sealed class SimplexProtocol : ISimplexProtocol
 
         _sb.AppendLine($"Розв’язувальний рядок:    {FormatRowLabel(tableau, pivotRow)}");
         _sb.AppendLine($"Розв’язувальний стовпець: {FormatColLabel(tableau, pivotCol)}");
-        _sb.AppendLine($"Розв’язувальний елемент:  {Format(tableau.GetValue(pivotRow, pivotCol))}");
         _sb.AppendLine();
     }
 
@@ -121,16 +146,64 @@ public sealed class SimplexProtocol : ISimplexProtocol
     public void LogBasicSolution(SimplexTableau tableau)
     {
         _sb.AppendLine("Знайдено опорний розв’язок:");
-        _sb.AppendLine($"X = ({FormatDecisionVector(tableau)})");
+        _sb.AppendLine();
+
+        double[] u = DualMultiplierExtractor.FromFinalTableau(tableau, _optimizationMode);
+
+        if (_protocolStyle == SimplexProtocolStyle.PrimalZ)
+        {
+            _sb.AppendLine("Розв’язки прямої задачі:");
+            _sb.AppendLine($"X = ({FormatDecisionVector(tableau)})");
+            if (u.Length > 0)
+            {
+                _sb.AppendLine();
+                _sb.AppendLine("Розв’язки двоїстої задачі:");
+                _sb.AppendLine($"U = ({string.Join("; ", u.Select(Format))})");
+            }
+        }
+        else
+        {
+            _sb.AppendLine("Розв’язки двоїстої задачі:");
+            _sb.AppendLine($"X = ({FormatDecisionVector(tableau)})");
+            if (u.Length > 0)
+            {
+                _sb.AppendLine();
+                _sb.AppendLine("Оцінки обмежень:");
+                _sb.AppendLine($"U = ({string.Join("; ", u.Select(Format))})");
+            }
+        }
+
         _sb.AppendLine();
     }
 
     public void LogContinuousOptimalSolution(SimplexTableau tableau)
     {
         double z = tableau.Data[tableau.RowsCount, tableau.ColsCount];
+        double[] u = DualMultiplierExtractor.FromFinalTableau(tableau, _optimizationMode);
+
         _sb.AppendLine("Знайдено оптимальний розв’язок:");
+        _sb.AppendLine();
+        _sb.AppendLine("Розв’язки прямої задачі:");
         _sb.AppendLine($"X = ({FormatDecisionVector(tableau)})");
-        _sb.AppendLine($"{OptimizationPrefix()} (Z) = {Format(z)}");
+        if (u.Length > 0)
+        {
+            _sb.AppendLine();
+            _sb.AppendLine("Розв’язки двоїстої задачі:");
+            _sb.AppendLine($"U = ({string.Join("; ", u.Select(Format))})");
+        }
+
+        _sb.AppendLine();
+        if (_optimizationMode == OptimizationMode.Maximization)
+        {
+            _sb.AppendLine($"Max (Z) = {Format(z)}");
+            _sb.AppendLine($"Min (W) = {Format(z)}");
+        }
+        else
+        {
+            _sb.AppendLine($"Min (Z) = {Format(z)}");
+            _sb.AppendLine($"Max (W) = {Format(z)}");
+        }
+
         _sb.AppendLine();
     }
 
@@ -162,13 +235,51 @@ public sealed class SimplexProtocol : ISimplexProtocol
         _sb.AppendLine();
     }
 
-    public void LogResult(SolverResult result)
+    public void LogResult(SolverResult result, string objectiveSymbol = "Z")
     {
         _sb.AppendLine();
         _sb.AppendLine("Знайдено оптимальний розв’язок:");
-        _sb.AppendLine($"X = ({string.Join("; ", result.X.Select(Format))})");
-        string prefix = _optimizationMode == OptimizationMode.Maximization ? "Max" : "Min";
-        _sb.AppendLine($"{prefix} (Z) = {Format(result.Z)}");
+        _sb.AppendLine();
+
+        if (_protocolStyle == SimplexProtocolStyle.PrimalZ)
+        {
+            _sb.AppendLine("Розв’язки прямої задачі:");
+            _sb.AppendLine($"X = ({string.Join("; ", result.X.Select(Format))})");
+            if (result.U.Length > 0)
+            {
+                _sb.AppendLine();
+                _sb.AppendLine("Розв’язки двоїстої задачі:");
+                _sb.AppendLine($"U = ({string.Join("; ", result.U.Select(Format))})");
+            }
+
+            _sb.AppendLine();
+            _sb.AppendLine($"Max (Z) = {Format(result.Z)}");
+            _sb.AppendLine($"Min (W) = {Format(result.Z)}");
+        }
+        else
+        {
+            _sb.AppendLine("Розв’язки двоїстої задачі:");
+            _sb.AppendLine($"X = ({string.Join("; ", result.X.Select(Format))})");
+            if (result.U.Length > 0)
+            {
+                _sb.AppendLine();
+                _sb.AppendLine("Оцінки обмежень:");
+                _sb.AppendLine($"U = ({string.Join("; ", result.U.Select(Format))})");
+            }
+
+            _sb.AppendLine();
+            if (_optimizationMode == OptimizationMode.Maximization)
+            {
+                _sb.AppendLine($"Max ({objectiveSymbol}) = {Format(result.Z)}");
+                _sb.AppendLine($"Min (Z) = {Format(result.Z)}");
+            }
+            else
+            {
+                _sb.AppendLine($"Min ({objectiveSymbol}) = {Format(result.Z)}");
+                _sb.AppendLine($"Max (Z) = {Format(result.Z)}");
+            }
+        }
+
         if (!result.Success)
             _sb.AppendLine("Неуспіх.");
     }

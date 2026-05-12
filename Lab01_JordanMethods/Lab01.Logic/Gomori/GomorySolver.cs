@@ -47,7 +47,7 @@ public sealed class GomorySolver : IGomorySolver
         {
             int row = cutBuilder.FindMostFractionalRow(tableau);
             if (row == -1)
-                return BuildResult(tableau);
+                return BuildResult(tableau, mode);
 
             int basisVar = tableau.BasisVariables[row];
             double bValue = tableau.GetB(row);
@@ -113,7 +113,7 @@ public sealed class GomorySolver : IGomorySolver
         return max + 1;
     }
 
-    private static SolverResult BuildResult(SimplexTableau tableau)
+    private static SolverResult BuildResult(SimplexTableau tableau, OptimizationMode mode)
     {
         var x = new double[tableau.ProblemVariableCount];
         for (int row = 0; row < tableau.RowsCount; row++)
@@ -123,10 +123,13 @@ public sealed class GomorySolver : IGomorySolver
                 x[varIndex] = tableau.GetB(row);
         }
 
+        double[] u = DualMultiplierExtractor.FromFinalTableau(tableau, mode);
+
         return new SolverResult
         {
             X = x,
             Y = Array.Empty<double>(),
+            U = u,
             Z = tableau.Data[tableau.RowsCount, tableau.ColsCount],
             Success = true
         };

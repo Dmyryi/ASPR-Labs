@@ -2,6 +2,7 @@ using Lab01.Logic;
 using Lab01.Logic.Interfaces;
 using Lab01.Logic.Models;
 using Lab01.Logic.Simplex;
+using Lab01.Logic.Simplex.Parsing;
 using Lab01.Logic.Simplex.Solvers;
 using Lab01.Logic.Simplex.Stages;
 using Xunit;
@@ -43,6 +44,7 @@ public class SimplexSolverTests
         var result = SolveMax(vectorZ, matrixA, vectorB, useZeroRowElimination: true);
 
         AssertSolution(expectedX, expectedZ, result);
+        AssertDual(new[] { 3.5, 0.0, 1.5 }, result);
     }
 
     [Fact]
@@ -84,6 +86,44 @@ public class SimplexSolverTests
         var result = solver.Solve(vectorZ, matrixA, vectorB);
 
         AssertSolution(expectedX, expectedZ, result);
+    }
+
+    [Fact]
+    public void Variant10_FromParsedText_Max_Z_5_Min_Z_2()
+    {
+        const string objective = "2x1 + x2";
+        const string constraints = "x1 + 2x2 = 4\nx1 + x2 <= 3";
+
+        var parser = new LinearProgramParser();
+        LinearProgram program = parser.Parse(objective, constraints);
+
+        double[] zMax = BuildObjectiveForMode(program.ObjectiveCoefficients, OptimizationMode.Maximization);
+        double[] zMin = BuildObjectiveForMode(program.ObjectiveCoefficients, OptimizationMode.Minimization);
+
+        var zeroRowEliminator = new ZeroRowEliminator(_jordan);
+        var optimalFinderMax = new OptimalSolutionFinder(_jordan, _pivotSelector, OptimizationMode.Maximization);
+        var solverMax = new MaximizationSolver(
+            _basicFinder, optimalFinderMax,
+            zeroRowEliminator: zeroRowEliminator,
+            useZeroRowElimination: true);
+
+        var optimalFinderMin = new OptimalSolutionFinder(_jordan, _pivotSelector, OptimizationMode.Minimization);
+        var solverMin = new MinimizationSolver(_basicFinder, optimalFinderMin);
+
+        SolverResult maxResult = solverMax.Solve(zMax, program.ConstraintMatrix, program.RightHandSide);
+        SolverResult minResult = solverMin.Solve(zMin, program.ConstraintMatrix, program.RightHandSide);
+
+        AssertSolution(new[] { 2.0, 1.0 }, 5, maxResult);
+        AssertSolution(new[] { 0.0, 2.0 }, 2, minResult);
+    }
+
+    private static double[] BuildObjectiveForMode(double[] objective, OptimizationMode mode)
+    {
+        int sign = mode == OptimizationMode.Maximization ? -1 : 1;
+        var vector = new double[objective.Length];
+        for (int i = 0; i < objective.Length; i++)
+            vector[i] = sign * objective[i];
+        return vector;
     }
 
     [Fact]
@@ -148,6 +188,15 @@ public class SimplexSolverTests
         var result = solver.Solve(vectorZ, matrixA, vectorB);
 
         Assert.True(result.Success);
+    }
+
+    private void AssertDual(double[] expectedU, SolverResult result)
+    {
+        _output.WriteLine($"Actual U:   ({string.Join(", ", result.U)})");
+        _output.WriteLine($"Expected U: ({string.Join(", ", expectedU)})");
+        Assert.Equal(expectedU.Length, result.U.Length);
+        for (int i = 0; i < expectedU.Length; i++)
+            Assert.Equal(expectedU[i], result.U[i], Precision);
     }
 
     private SolverResult SolveMax(double[] vectorZ, double[,] matrixA, double[] vectorB, bool useZeroRowElimination)

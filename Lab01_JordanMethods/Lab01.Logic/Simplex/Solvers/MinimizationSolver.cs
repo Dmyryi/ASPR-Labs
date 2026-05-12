@@ -1,4 +1,6 @@
 using Lab01.Logic.Interfaces;
+using Lab01.Logic.Models;
+using Lab01.Logic.Simplex;
 
 namespace Lab01.Logic.Simplex.Solvers;
 
@@ -8,7 +10,7 @@ public sealed class MinimizationSolver : LinearSolverBase
         IBasicSolutionFinder basicFinder,
         IOptimalSolution optimalFinder,
         ISimplexProtocol? protocol = null)
-        : base(basicFinder, optimalFinder, protocol)
+        : base(basicFinder, optimalFinder, OptimizationMode.Minimization, protocol)
     {
     }
 

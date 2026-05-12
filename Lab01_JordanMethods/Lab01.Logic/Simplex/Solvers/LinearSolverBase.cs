@@ -1,5 +1,6 @@
 using Lab01.Logic.Interfaces;
 using Lab01.Logic.Models;
+using Lab01.Logic.Simplex;
 
 namespace Lab01.Logic.Simplex.Solvers;
 
@@ -8,15 +9,18 @@ public abstract class LinearSolverBase : ILinearSolver
     protected IBasicSolutionFinder BasicFinder { get; }
     protected IOptimalSolution OptimalFinder { get; }
     protected ISimplexProtocol? Protocol { get; }
+    protected OptimizationMode OptimizationMode { get; }
 
     protected LinearSolverBase(
         IBasicSolutionFinder basicFinder,
         IOptimalSolution optimalFinder,
+        OptimizationMode optimizationMode,
         ISimplexProtocol? protocol)
     {
         BasicFinder = basicFinder;
         OptimalFinder = optimalFinder;
         Protocol = protocol;
+        OptimizationMode = optimizationMode;
     }
 
     public SolverResult Solve(double[] vectorZ, double[,] matrixA, double[] vectorB)
@@ -42,12 +46,14 @@ public abstract class LinearSolverBase : ILinearSolver
         double[] x = ExtractDecisionVariables(tableau);
         double[] y = ExtractSlackValues(tableau);
         double z = tableau.Data[tableau.RowsCount, tableau.ColsCount];
+        double[] u = DualMultiplierExtractor.FromFinalTableau(tableau, OptimizationMode);
 
         return new SolverResult
         {
             X = x,
             Y = y,
             Z = z,
+            U = u,
             Success = true
         };
     }
