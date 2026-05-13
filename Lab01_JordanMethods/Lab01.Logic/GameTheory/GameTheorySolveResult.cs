@@ -22,9 +22,7 @@ public sealed class GameTheorySolveResult
 
     public double? LpObjectiveMaxSumX { get; init; }
 
-    /// <summary> Чи виконувалось ітеративне вилучення строго домінованих стратегій перед розв’язком (рис. 6.1). </summary>
     public bool EliminatedDominatedStrategies { get; init; }
 
-    /// <summary> Журнал вилучень (для звіту за методичкою). </summary>
     public string? DominanceReductionLog { get; init; }
 }

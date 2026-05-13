@@ -1,6 +1,5 @@
 namespace Lab01.App.ViewModels;
 
-/// <summary> Рядок таблиці 6.1 для відображення в DataGrid. </summary>
 public sealed class MatrixGameProtocolRowDisplay
 {
     public int Round { get; init; }

@@ -2,9 +2,6 @@ using Lab01.Logic.Interfaces;
 
 namespace Lab01.Logic.GameTheory;
 
-/// <summary>
-/// Алгоритм рис. 6.1: після вилучення домінованих стратегій — сідло; якщо немає — 2×2, 2×n, m×2 або пара двоїстих ЗЛП (симплекс).
-/// </summary>
 public sealed class MatrixGameSolver
 {
     private readonly MatrixGameMixedLpSolver _lp;

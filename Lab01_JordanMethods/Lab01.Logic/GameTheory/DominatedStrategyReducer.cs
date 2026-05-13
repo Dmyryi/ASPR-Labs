@@ -1,10 +1,5 @@
 namespace Lab01.Logic.GameTheory;
 
-/// <summary>
-/// Крок «вилучення неактивних (домінованих) стратегій» з рис. 6.1 методички:
-/// стовпець k вилучається, якщо існує j: для всіх рядків a[i,j] ≤ a[i,k] і хоча б для одного рядка строго менше (B мінімізує виграш A);
-/// рядок k вилучається, якщо існує i: для всіх стовпців a[i,j] ≥ a[k,j] і хоча б для одного стовпця строго більше (A максимізує).
-/// </summary>
 public static class DominatedStrategyReducer
 {
     private const double Tol = 1e-10;
@@ -81,7 +76,6 @@ public static class DominatedStrategyReducer
         return false;
     }
 
-    /// <summary> Стовпець k домінується стовпцем j (для B, що мінімізує виграш A). </summary>
     private static bool IsColumnDominatedBy(double[,] full, List<int> rows, int colK, int colJ)
     {
         bool strict = false;
@@ -98,7 +92,6 @@ public static class DominatedStrategyReducer
         return strict;
     }
 
-    /// <summary> Рядок k домінується рядком i (для A, що максимізує). </summary>
     private static bool IsRowDominatedBy(double[,] full, List<int> cols, int rowK, int rowI)
     {
         bool strict = false;
