@@ -4,6 +4,7 @@ using Lab01.Logic;
 using Lab01.Logic.BasicLogic;
 using Lab01.Logic.Interfaces;
 using Lab01.Logic.Interfaces.IBasicLogic;
+using Lab01.Logic.GameTheory;
 using Lab01.Logic.Gomori;
 using Lab01.Logic.Simplex;
 using Lab01.Logic.Simplex.Parsing;
@@ -36,6 +37,8 @@ public partial class App : Application
         services.AddSingleton<ILinearProgramParser, LinearProgramParser>();
         services.AddSingleton<ISimplexSolverFactory, SimplexSolverFactory>();
         services.AddSingleton<IGomorySolver, GomorySolver>();
+        services.AddSingleton<MatrixGameSolver>(sp =>
+            new MatrixGameSolver(sp.GetRequiredService<ISimplexSolverFactory>()));
 
         services.AddTransient<IMatrixInverter>(sp => new MatrixInverter(sp.GetRequiredService<IJordan>()));
         services.AddTransient<IRankCalculator>(sp => new RankCalculator(sp.GetRequiredService<IJordan>()));
@@ -52,6 +55,8 @@ public partial class App : Application
                 sp.GetRequiredService<IProtocolSaver>(),
                 sp));
         services.AddTransient<GomoryViewModel>();
+        services.AddTransient<MatrixGameViewModel>(sp =>
+            new MatrixGameViewModel(sp.GetRequiredService<MatrixGameSolver>()));
         services.AddTransient<MainViewModel>();
 
         services.AddSingleton<Func<InverseMatrixViewModel>>(sp => sp.GetRequiredService<InverseMatrixViewModel>);

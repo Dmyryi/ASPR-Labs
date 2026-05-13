@@ -16,13 +16,15 @@ public sealed class MainViewModel : ViewModelBase
         Func<RankViewModel> rankFactory,
         Func<LinearSystemViewModel> linearSystemFactory,
         SimplexViewModel simplexViewModel,
-        GomoryViewModel gomoryViewModel)
+        GomoryViewModel gomoryViewModel,
+        MatrixGameViewModel matrixGameViewModel)
     {
         _inverseFactory = inverseFactory;
         _rankFactory = rankFactory;
         _linearSystemFactory = linearSystemFactory;
         SimplexViewModel = simplexViewModel;
         GomoryViewModel = gomoryViewModel;
+        MatrixGameViewModel = matrixGameViewModel;
 
         _currentViewModel = _inverseFactory();
         _selectedIndex = 0;
@@ -34,6 +36,7 @@ public sealed class MainViewModel : ViewModelBase
 
     public SimplexViewModel SimplexViewModel { get; }
     public GomoryViewModel GomoryViewModel { get; }
+    public MatrixGameViewModel MatrixGameViewModel { get; }
 
     public int SelectedIndex
     {
