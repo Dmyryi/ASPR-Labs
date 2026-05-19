@@ -230,6 +230,14 @@
                                     </ScrollViewer>
                                 </Border>
                             </TabItem>
+
+                            <TabItem Header="Сіткове планування">
+                                <Border Margin="0,4,0,0">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                        <views:NetworkPlanningView DataContext="{Binding NetworkPlanningViewModel}" Margin="0,4,0,16"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </TabItem>
                         </TabControl>
                     </Grid>
                 </Border>

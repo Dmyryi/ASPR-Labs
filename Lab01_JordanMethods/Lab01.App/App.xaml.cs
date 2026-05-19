@@ -63,6 +63,8 @@ public partial class App : Application
             new TransportationViewModel(sp.GetRequiredService<IProtocolSaver>()));
         services.AddTransient<AssignmentViewModel>(sp =>
             new AssignmentViewModel(sp.GetRequiredService<IProtocolSaver>()));
+        services.AddTransient<NetworkPlanningViewModel>(sp =>
+            new NetworkPlanningViewModel(sp.GetRequiredService<IProtocolSaver>()));
         services.AddTransient<MainViewModel>();
 
         services.AddSingleton<Func<InverseMatrixViewModel>>(sp => sp.GetRequiredService<InverseMatrixViewModel>);

@@ -1,0 +1,17 @@
+<UserControl x:Class="Lab01.App.Views.NetworkPlanningCharts"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             SizeChanged="NetworkPlanningCharts_OnSizeChanged">
+    <TabControl Style="{StaticResource PillTabControl}" ItemContainerStyle="{StaticResource PillTabItem}">
+        <TabItem Header="Календарний графік">
+            <Grid>
+                <Canvas x:Name="GanttCanvas" Margin="4" Background="#08FFFFFF"/>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Графік завантаження">
+            <Grid>
+                <Canvas x:Name="ResourceCanvas" Margin="4" Background="#08FFFFFF"/>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</UserControl>

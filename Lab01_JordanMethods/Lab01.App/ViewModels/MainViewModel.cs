@@ -20,7 +20,8 @@ public sealed class MainViewModel : ViewModelBase
         MatrixGameViewModel matrixGameViewModel,
         NatureGameViewModel natureGameViewModel,
         TransportationViewModel transportationViewModel,
-        AssignmentViewModel assignmentViewModel)
+        AssignmentViewModel assignmentViewModel,
+        NetworkPlanningViewModel networkPlanningViewModel)
     {
         _inverseFactory = inverseFactory;
         _rankFactory = rankFactory;
@@ -31,6 +32,7 @@ public sealed class MainViewModel : ViewModelBase
         NatureGameViewModel = natureGameViewModel;
         TransportationViewModel = transportationViewModel;
         AssignmentViewModel = assignmentViewModel;
+        NetworkPlanningViewModel = networkPlanningViewModel;
 
         _currentViewModel = _inverseFactory();
         _selectedIndex = 0;
@@ -46,6 +48,7 @@ public sealed class MainViewModel : ViewModelBase
     public NatureGameViewModel NatureGameViewModel { get; }
     public TransportationViewModel TransportationViewModel { get; }
     public AssignmentViewModel AssignmentViewModel { get; }
+    public NetworkPlanningViewModel NetworkPlanningViewModel { get; }
 
     public int SelectedIndex
     {
