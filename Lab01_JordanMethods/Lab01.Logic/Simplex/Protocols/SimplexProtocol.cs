@@ -25,7 +25,7 @@ public sealed class SimplexProtocol : ISimplexProtocol
         _gomoryMode = false;
         _optimizationMode = mode;
         _protocolStyle = style;
-        _canonicalProgram = style == SimplexProtocolStyle.PrimalZ ? canonicalProgram : null;
+        _canonicalProgram = canonicalProgram;
         _dualStatementLogged = false;
         _useTextbookTableLabels = style == SimplexProtocolStyle.PrimalZ;
 
@@ -35,7 +35,7 @@ public sealed class SimplexProtocol : ISimplexProtocol
 
         if (style == SimplexProtocolStyle.DualW)
         {
-            _sb.AppendLine("Постановка двоїстої задачі:");
+            _sb.AppendLine("Постановка задачі:");
             _sb.AppendLine();
             _sb.AppendLine($"W = {objective}  ->  {(mode == OptimizationMode.Maximization ? "max" : "min")}");
         }
@@ -51,17 +51,23 @@ public sealed class SimplexProtocol : ISimplexProtocol
         foreach (var line in constraints.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries))
             _sb.AppendLine(line.Trim());
 
-        if (canonicalProgram is not null && style == SimplexProtocolStyle.PrimalZ)
+        if (canonicalProgram is not null)
         {
             _sb.AppendLine($"x_j ≥ 0, j = 1,{canonicalProgram.VariableCount}.");
             _sb.AppendLine();
-            _sb.AppendLine("Перепишемо систему обмежень прямої задачі:");
+            if (style == SimplexProtocolStyle.PrimalZ)
+                _sb.AppendLine("Перепишемо систему обмежень прямої задачі:");
+            else
+                _sb.AppendLine("Перепишемо систему обмежень:");
             _sb.AppendLine();
             WriteCanonicalInequalities(canonicalProgram.ConstraintMatrix, canonicalProgram.RightHandSide);
         }
 
         _sb.AppendLine();
-        _sb.AppendLine("Вхідна симплекс-таблиця для пари взаємно двоїстих задач:");
+        if (style == SimplexProtocolStyle.DualW)
+            _sb.AppendLine("Вхідна симплекс-таблиця:");
+        else
+            _sb.AppendLine("Вхідна симплекс-таблиця для пари взаємно двоїстих задач:");
         _sb.AppendLine();
     }
 
@@ -140,7 +146,7 @@ public sealed class SimplexProtocol : ISimplexProtocol
 
     public void LogPivot(int? step, SimplexTableau tableau, int pivotRow, int pivotCol)
     {
-        if (step.HasValue && !_useTextbookTableLabels)
+        if (step.HasValue && !_useTextbookTableLabels && _protocolStyle != SimplexProtocolStyle.DualW)
             _sb.AppendLine($"Крок #{step}:");
 
         _sb.AppendLine($"Розв’язувальний рядок:    {FormatRowLabel(tableau, pivotRow)}");

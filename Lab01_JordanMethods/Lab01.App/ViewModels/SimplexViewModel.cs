@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -217,11 +218,23 @@ public sealed class SimplexViewModel : ViewModelBase
     private void SaveProtocol()
     {
         var preamble = _profile.ProtocolFilePreamble + "\r\n\r\n";
-        var content = string.IsNullOrEmpty(_lastProtocol)
-            ? preamble + "Немає протоколу. Натисніть «Run»."
-            : preamble + _lastProtocol;
-        _protocolSaver.Save(content);
-        Status = "Протокол збережено у protocol.txt";
+        var body = string.IsNullOrEmpty(_lastProtocol)
+            ? "Немає протоколу. Спочатку виконайте Run (Max або Min)."
+            : _lastProtocol;
+        var content = preamble + body;
+
+        string dir = ProtocolSavePaths.ResolveLab01AppProjectDirectory();
+        string prefix = _profile.IsDual ? "protokol_dvoisty_zadacha" : "protokol_simplex_prjam";
+        string path = Path.GetFullPath(Path.Combine(dir, $"{prefix}_{DateTime.Now:yyyyMMdd_HHmmss}.txt"));
+        _protocolSaver.Save(content, path);
+
+        Status = "Протокол збережено: " + path;
+        MessageBox.Show(
+            Application.Current?.MainWindow,
+            "Протокол збережено у файл:\r\n" + path,
+            "Протокол",
+            MessageBoxButton.OK,
+            MessageBoxImage.Information);
     }
 
     private void LoadExample1()
