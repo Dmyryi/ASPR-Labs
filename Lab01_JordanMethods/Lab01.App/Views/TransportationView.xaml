@@ -1,0 +1,89 @@
+<UserControl x:Class="Lab01.App.Views.TransportationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Width="920">
+    <Grid Margin="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,14" Orientation="Horizontal">
+            <TextBlock Text="Транспортна задача" Style="{StaticResource TitleText}" VerticalAlignment="Center"/>
+            <Border Margin="14,0,0,0" Padding="10,4" CornerRadius="8"
+                    Background="{StaticResource CardSurface}" BorderBrush="{StaticResource CardStroke}" BorderThickness="1"
+                    VerticalAlignment="Center">
+                <TextBlock Text="SP — вартості; PO — запаси; PN — заявки" Style="{StaticResource SubtitleText}" FontWeight="SemiBold" FontSize="13"/>
+            </Border>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="260" MaxWidth="400"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*" MinWidth="340"/>
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <TextBlock Text="Матриця вартостей SP:" Style="{StaticResource SectionHeader}" Margin="0,0,0,6"/>
+                    <TextBox Text="{Binding CostsText, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource InputTextBox}"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             MinHeight="120"
+                             FontFamily="Consolas"
+                             FontSize="14"/>
+
+                    <TextBlock Text="Вектор запасів PO:" Style="{StaticResource SectionHeader}" Margin="0,14,0,6"/>
+                    <TextBox Text="{Binding SupplyText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputTextBox}" FontFamily="Consolas"/>
+
+                    <TextBlock Text="Вектор заявок PN:" Style="{StaticResource SectionHeader}" Margin="0,14,0,6"/>
+                    <TextBox Text="{Binding DemandText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputTextBox}" FontFamily="Consolas"/>
+
+                    <TextBlock Text="{Binding BalanceInfo, Mode=OneWay}" Style="{StaticResource HintText}" Margin="0,12,0,0" TextWrapping="Wrap"/>
+                </StackPanel>
+            </ScrollViewer>
+
+            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <Button Command="{Binding SolveCommand}" Style="{StaticResource ActionButton}" Padding="18,10" Margin="0,0,10,0">
+                            <TextBlock Text="Розрахувати" FontWeight="SemiBold" FontSize="13"/>
+                        </Button>
+                        <Button Command="{Binding GenerateProtocolCommand}" Style="{StaticResource SecondaryButton}" Padding="16,10">
+                            <TextBlock Text="Згенерувати протокол" FontWeight="SemiBold" FontSize="13"/>
+                        </Button>
+                    </StackPanel>
+                    <TextBlock Text="{Binding SavedProtocolPath, Mode=OneWay}"
+                               Style="{StaticResource HintText}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,14"/>
+
+                    <TextBlock Text="Північно-західний кут" Style="{StaticResource SectionHeader}" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding NorthwestDisplay, Mode=OneWay}" Style="{StaticResource InputTextBox}" IsReadOnly="True"
+                             AcceptsReturn="True" TextWrapping="Wrap" MinHeight="72" FontFamily="Consolas" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Мінімальний елемент" Style="{StaticResource SectionHeader}" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding MinimumElementDisplay, Mode=OneWay}" Style="{StaticResource InputTextBox}" IsReadOnly="True"
+                             AcceptsReturn="True" TextWrapping="Wrap" MinHeight="72" FontFamily="Consolas" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Оптимальний план (потенціали)" Style="{StaticResource SectionHeader}" Margin="0,0,0,4"/>
+                    <TextBox Text="{Binding OptimalDisplay, Mode=OneWay}" Style="{StaticResource InputTextBox}" IsReadOnly="True"
+                             AcceptsReturn="True" TextWrapping="Wrap" MinHeight="72" FontFamily="Consolas" Margin="0,0,0,14"/>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Button Command="{Binding LoadExample1Command}" Style="{StaticResource SecondaryButton}" Padding="12,8" Margin="0,0,8,0">
+                            <TextBlock Text="Тест 1" FontSize="12"/>
+                        </Button>
+                        <Button Command="{Binding LoadExample2Command}" Style="{StaticResource SecondaryButton}" Padding="12,8" Margin="0,0,8,0">
+                            <TextBlock Text="Тест 2" FontSize="12"/>
+                        </Button>
+                        <Button Command="{Binding LoadVariant10Command}" Style="{StaticResource SecondaryButton}" Padding="12,8">
+                            <TextBlock Text="Варіант 10" FontSize="12"/>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>
