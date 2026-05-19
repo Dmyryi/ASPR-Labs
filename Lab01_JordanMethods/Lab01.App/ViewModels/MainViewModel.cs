@@ -21,7 +21,8 @@ public sealed class MainViewModel : ViewModelBase
         NatureGameViewModel natureGameViewModel,
         TransportationViewModel transportationViewModel,
         AssignmentViewModel assignmentViewModel,
-        NetworkPlanningViewModel networkPlanningViewModel)
+        NetworkPlanningViewModel networkPlanningViewModel,
+        MultiCriteriaViewModel multiCriteriaViewModel)
     {
         _inverseFactory = inverseFactory;
         _rankFactory = rankFactory;
@@ -33,6 +34,7 @@ public sealed class MainViewModel : ViewModelBase
         TransportationViewModel = transportationViewModel;
         AssignmentViewModel = assignmentViewModel;
         NetworkPlanningViewModel = networkPlanningViewModel;
+        MultiCriteriaViewModel = multiCriteriaViewModel;
 
         _currentViewModel = _inverseFactory();
         _selectedIndex = 0;
@@ -49,6 +51,7 @@ public sealed class MainViewModel : ViewModelBase
     public TransportationViewModel TransportationViewModel { get; }
     public AssignmentViewModel AssignmentViewModel { get; }
     public NetworkPlanningViewModel NetworkPlanningViewModel { get; }
+    public MultiCriteriaViewModel MultiCriteriaViewModel { get; }
 
     public int SelectedIndex
     {

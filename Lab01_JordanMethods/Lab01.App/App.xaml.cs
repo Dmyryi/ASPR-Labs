@@ -5,6 +5,7 @@ using Lab01.Logic.BasicLogic;
 using Lab01.Logic.Interfaces;
 using Lab01.Logic.Interfaces.IBasicLogic;
 using Lab01.Logic.GameTheory;
+using Lab01.Logic.MultiCriteria;
 using Lab01.Logic.Gomori;
 using Lab01.Logic.Simplex;
 using Lab01.Logic.Simplex.Parsing;
@@ -65,6 +66,15 @@ public partial class App : Application
             new AssignmentViewModel(sp.GetRequiredService<IProtocolSaver>()));
         services.AddTransient<NetworkPlanningViewModel>(sp =>
             new NetworkPlanningViewModel(sp.GetRequiredService<IProtocolSaver>()));
+        services.AddTransient<MultiCriteriaSolver>(sp =>
+            new MultiCriteriaSolver(
+                sp.GetRequiredService<ILinearProgramParser>(),
+                sp.GetRequiredService<ISimplexSolverFactory>(),
+                sp.GetRequiredService<MatrixGameSolver>()));
+        services.AddTransient<MultiCriteriaViewModel>(sp =>
+            new MultiCriteriaViewModel(
+                sp.GetRequiredService<MultiCriteriaSolver>(),
+                sp.GetRequiredService<IProtocolSaver>()));
         services.AddTransient<MainViewModel>();
 
         services.AddSingleton<Func<InverseMatrixViewModel>>(sp => sp.GetRequiredService<InverseMatrixViewModel>);

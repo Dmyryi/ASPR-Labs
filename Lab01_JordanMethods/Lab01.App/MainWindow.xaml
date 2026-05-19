@@ -238,6 +238,14 @@
                                     </ScrollViewer>
                                 </Border>
                             </TabItem>
+
+                            <TabItem Header="Багатокритеріальна">
+                                <Border Margin="0,4,0,0">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                        <views:MultiCriteriaView DataContext="{Binding MultiCriteriaViewModel}" Margin="0,4,0,16"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </TabItem>
                         </TabControl>
                     </Grid>
                 </Border>
