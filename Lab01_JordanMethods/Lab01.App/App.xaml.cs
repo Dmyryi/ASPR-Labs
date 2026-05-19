@@ -59,8 +59,6 @@ public partial class App : Application
             new MatrixGameViewModel(sp.GetRequiredService<MatrixGameSolver>()));
         services.AddTransient<NatureGameViewModel>(sp =>
             new NatureGameViewModel(sp.GetRequiredService<IProtocolSaver>()));
-        services.AddTransient<TransportationViewModel>(sp =>
-            new TransportationViewModel(sp.GetRequiredService<IProtocolSaver>()));
         services.AddTransient<MainViewModel>();
 
         services.AddSingleton<Func<InverseMatrixViewModel>>(sp => sp.GetRequiredService<InverseMatrixViewModel>);

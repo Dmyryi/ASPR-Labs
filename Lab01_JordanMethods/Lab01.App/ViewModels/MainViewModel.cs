@@ -18,8 +18,7 @@ public sealed class MainViewModel : ViewModelBase
         SimplexViewModel simplexViewModel,
         GomoryViewModel gomoryViewModel,
         MatrixGameViewModel matrixGameViewModel,
-        NatureGameViewModel natureGameViewModel,
-        TransportationViewModel transportationViewModel)
+        NatureGameViewModel natureGameViewModel)
     {
         _inverseFactory = inverseFactory;
         _rankFactory = rankFactory;
@@ -28,7 +27,6 @@ public sealed class MainViewModel : ViewModelBase
         GomoryViewModel = gomoryViewModel;
         MatrixGameViewModel = matrixGameViewModel;
         NatureGameViewModel = natureGameViewModel;
-        TransportationViewModel = transportationViewModel;
 
         _currentViewModel = _inverseFactory();
         _selectedIndex = 0;
@@ -42,7 +40,6 @@ public sealed class MainViewModel : ViewModelBase
     public GomoryViewModel GomoryViewModel { get; }
     public MatrixGameViewModel MatrixGameViewModel { get; }
     public NatureGameViewModel NatureGameViewModel { get; }
-    public TransportationViewModel TransportationViewModel { get; }
 
     public int SelectedIndex
     {

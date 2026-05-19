@@ -19,12 +19,10 @@ public sealed class SimplexProtocol : ISimplexProtocol
     private LinearProgram? _canonicalProgram;
     private bool _dualStatementLogged;
     private bool _useTextbookTableLabels;
-    private bool _transportationMode;
 
     public void Start(OptimizationMode mode, string objective, string constraints, LinearProgram? canonicalProgram = null, SimplexProtocolStyle style = SimplexProtocolStyle.PrimalZ)
     {
         _gomoryMode = false;
-        _transportationMode = false;
         _optimizationMode = mode;
         _protocolStyle = style;
         _canonicalProgram = style == SimplexProtocolStyle.PrimalZ ? canonicalProgram : null;
@@ -67,43 +65,11 @@ public sealed class SimplexProtocol : ISimplexProtocol
         _sb.AppendLine();
     }
 
-    public void StartTransportation(string objectiveMin, string objectiveMax, string constraints, LinearProgram program)
-    {
-        ArgumentNullException.ThrowIfNull(program);
-
-        _gomoryMode = false;
-        _transportationMode = true;
-        _optimizationMode = OptimizationMode.Maximization;
-        _protocolStyle = SimplexProtocolStyle.PrimalZ;
-        _canonicalProgram = program;
-        _dualStatementLogged = true;
-        _useTextbookTableLabels = true;
-        _problemVariableCount = program.VariableCount;
-        _originalConstraintCount = program.ConstraintCount;
-
-        _sb.Clear();
-        _sb.AppendLine("Постановка задачі:");
-        _sb.AppendLine();
-        _sb.AppendLine($"Z = {objectiveMin}  ->  min");
-        _sb.AppendLine($"Z' = {objectiveMax}  ->  max");
-        _sb.AppendLine();
-        _sb.AppendLine("при обмеженнях:");
-        foreach (var line in constraints.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries))
-            _sb.AppendLine(line.Trim());
-
-        _sb.AppendLine();
-        _sb.AppendLine($"x[j] >= 0, j=1,{program.VariableCount}.");
-        _sb.AppendLine();
-        _sb.AppendLine("Вхідна симплекс-таблиця:");
-        _sb.AppendLine();
-    }
-
     public void StartGomory(OptimizationMode mode, string objective, string constraints, LinearProgram program)
     {
         ArgumentNullException.ThrowIfNull(program);
 
         _gomoryMode = true;
-        _transportationMode = false;
         _protocolStyle = SimplexProtocolStyle.PrimalZ;
         _optimizationMode = mode;
         _canonicalProgram = null;
@@ -195,13 +161,6 @@ public sealed class SimplexProtocol : ISimplexProtocol
     {
         _sb.AppendLine("Знайдено опорний розв’язок:");
         _sb.AppendLine();
-
-        if (_transportationMode)
-        {
-            _sb.AppendLine("Симплекс-таблиця:");
-            _sb.AppendLine();
-            WriteTableau(tableau);
-        }
 
         double[] u = DualMultiplierExtractor.FromFinalTableau(tableau, _optimizationMode);
 
@@ -295,17 +254,6 @@ public sealed class SimplexProtocol : ISimplexProtocol
         _sb.AppendLine();
         _sb.AppendLine("Знайдено оптимальний розв’язок:");
         _sb.AppendLine();
-
-        if (_transportationMode)
-        {
-            _sb.AppendLine("Симплекс-таблиця:");
-            _sb.AppendLine();
-            _sb.AppendLine($"X = ({string.Join("; ", result.X.Select(Format))})");
-            _sb.AppendLine();
-            _sb.AppendLine($"Min (Z) = {Format(result.Z)}");
-            _sb.AppendLine();
-            return;
-        }
 
         if (_protocolStyle == SimplexProtocolStyle.PrimalZ)
         {
