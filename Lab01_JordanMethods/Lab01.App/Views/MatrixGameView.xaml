@@ -82,7 +82,7 @@
                             <TextBlock Text="Приклад 3×3" FontSize="12"/>
                         </Button>
                         <Button Command="{Binding LoadVariant1Command}" Style="{StaticResource SecondaryButton}" Padding="12,8">
-                            <TextBlock Text="Варіант 1 (A1)" FontSize="12"/>
+                            <TextBlock Text="Варіант 10 (A1)" FontSize="12"/>
                         </Button>
                     </StackPanel>
                 </StackPanel>
