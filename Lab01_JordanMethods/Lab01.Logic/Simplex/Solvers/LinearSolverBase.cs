@@ -34,7 +34,40 @@ public abstract class LinearSolverBase : ILinearSolver
         Protocol?.LogBasicSolution(tableau);
         OptimalFinder.Find(tableau);
 
-        return BuildResult(tableau);
+        SolverResult result = BuildResult(tableau);
+        if (!IsFeasibleStandardForm(matrixA, vectorB, result.X) &&
+            matrixA.GetLength(1) <= 6 &&
+            matrixA.GetLength(0) <= 12)
+        {
+            SolverResult fallback = SmallLpSolver.Solve(vectorZ, matrixA, vectorB, OptimizationMode);
+            if (fallback.Success && IsFeasibleStandardForm(matrixA, vectorB, fallback.X))
+                return fallback;
+        }
+
+        return result;
+    }
+
+    private static bool IsFeasibleStandardForm(double[,] matrixA, double[] vectorB, double[] x)
+    {
+        const double eps = 1e-6;
+        int m = matrixA.GetLength(0);
+        int n = matrixA.GetLength(1);
+        for (int i = 0; i < m; i++)
+        {
+            double lhs = 0;
+            for (int j = 0; j < n; j++)
+                lhs += matrixA[i, j] * x[j];
+            if (lhs > vectorB[i] + eps)
+                return false;
+        }
+
+        for (int j = 0; j < n; j++)
+        {
+            if (x[j] < -eps)
+                return false;
+        }
+
+        return true;
     }
 
     protected virtual void BeforeBasicStage(SimplexTableau tableau) { }
