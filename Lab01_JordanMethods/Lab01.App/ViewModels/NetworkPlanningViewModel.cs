@@ -34,7 +34,6 @@ public sealed class NetworkPlanningViewModel : ViewModelBase
         SelectNextTaskCommand = new RelayCommand(SelectNextTask);
         ShiftEarlierCommand = new RelayCommand(() => ShiftSelected(-1), () => CanShiftSelected);
         ShiftLaterCommand = new RelayCommand(() => ShiftSelected(1), () => CanShiftSelected);
-        OptimizeScheduleCommand = new RelayCommand(OptimizeSchedule, () => _schedule is not null);
 
         LoadVariant10();
     }
@@ -96,7 +95,6 @@ public sealed class NetworkPlanningViewModel : ViewModelBase
     public ICommand SelectNextTaskCommand { get; }
     public ICommand ShiftEarlierCommand { get; }
     public ICommand ShiftLaterCommand { get; }
-    public ICommand OptimizeScheduleCommand { get; }
 
     public event EventHandler? ChartChanged;
 
@@ -168,14 +166,6 @@ public sealed class NetworkPlanningViewModel : ViewModelBase
             UpdateScheduleHint();
             NotifyChartChanged();
         }
-    }
-
-    private void OptimizeSchedule()
-    {
-        if (_schedule is null) return;
-        _schedule.Optimize();
-        UpdateScheduleHint();
-        NotifyChartChanged();
     }
 
     private void UpdateScheduleHint()

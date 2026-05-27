@@ -60,16 +60,28 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="12"/>
-                            <ColumnDefinition Width="72"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="Критичний шлях" Style="{StaticResource HintText}" Margin="0,0,0,4"/>
                             <TextBox Text="{Binding CriticalPathDisplay, Mode=OneWay}" Style="{StaticResource InputTextBox}" IsReadOnly="True" FontFamily="Consolas"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="2">
+                        <Border Grid.Column="2"
+                                MinWidth="150"
+                                Padding="10,8"
+                                CornerRadius="10"
+                                Background="#18FFFFFF"
+                                BorderBrush="{StaticResource CardStroke}"
+                                BorderThickness="1">
+                            <StackPanel>
                             <TextBlock Text="T проєкту" Style="{StaticResource HintText}" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding DurationDisplay, Mode=OneWay}" Style="{StaticResource InputTextBox}" IsReadOnly="True" FontFamily="Consolas"/>
-                        </StackPanel>
+                            <TextBlock Text="{Binding DurationDisplay, Mode=OneWay, StringFormat={}{0} дн}"
+                                       Foreground="#F2FFFFFF"
+                                       FontWeight="SemiBold"
+                                       FontSize="18"
+                                       FontFamily="Consolas"/>
+                            </StackPanel>
+                        </Border>
                     </Grid>
 
                     <StackPanel Orientation="Horizontal">
@@ -127,11 +139,8 @@
                                 <Button Command="{Binding ShiftEarlierCommand}" Style="{StaticResource SecondaryButton}" Padding="8,6" Margin="0,0,4,0" ToolTip="Раніше (у межах резерву)">
                                     <TextBlock Text="&#xE72B;" FontFamily="Segoe MDL2 Assets" FontSize="12"/>
                                 </Button>
-                                <Button Command="{Binding ShiftLaterCommand}" Style="{StaticResource SecondaryButton}" Padding="8,6" Margin="0,0,8,0" ToolTip="Пізніше (у межах резерву)">
+                                <Button Command="{Binding ShiftLaterCommand}" Style="{StaticResource SecondaryButton}" Padding="8,6" ToolTip="Пізніше (у межах резерву)">
                                     <TextBlock Text="&#xE72A;" FontFamily="Segoe MDL2 Assets" FontSize="12"/>
-                                </Button>
-                                <Button Command="{Binding OptimizeScheduleCommand}" Style="{StaticResource ActionButton}" Padding="10,6" ToolTip="Оптимізувати завантаження">
-                                    <TextBlock Text="Оптимізувати" FontSize="11" FontWeight="SemiBold"/>
                                 </Button>
                             </StackPanel>
                         </Grid>

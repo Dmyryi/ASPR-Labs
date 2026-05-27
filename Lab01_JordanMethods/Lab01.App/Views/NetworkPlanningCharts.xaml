@@ -4,14 +4,20 @@
              SizeChanged="NetworkPlanningCharts_OnSizeChanged">
     <TabControl Style="{StaticResource PillTabControl}" ItemContainerStyle="{StaticResource PillTabItem}">
         <TabItem Header="Календарний графік">
-            <Grid>
-                <Canvas x:Name="GanttCanvas" Margin="4" Background="#08FFFFFF"/>
-            </Grid>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto"
+                          CanContentScroll="False"
+                          Padding="4">
+                <Canvas x:Name="GanttCanvas" Background="#08FFFFFF"/>
+            </ScrollViewer>
         </TabItem>
         <TabItem Header="Графік завантаження">
-            <Grid>
-                <Canvas x:Name="ResourceCanvas" Margin="4" Background="#08FFFFFF"/>
-            </Grid>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto"
+                          CanContentScroll="False"
+                          Padding="4">
+                <Canvas x:Name="ResourceCanvas" Background="#08FFFFFF"/>
+            </ScrollViewer>
         </TabItem>
     </TabControl>
 </UserControl>

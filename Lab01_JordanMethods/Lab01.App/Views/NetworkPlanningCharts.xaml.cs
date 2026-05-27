@@ -46,14 +46,17 @@ public partial class NetworkPlanningCharts
     private void DrawGantt(NetworkSchedule schedule)
     {
         CriticalPathSolveResult result = schedule.Result;
-        double width = Math.Max(GanttCanvas.ActualWidth, 200);
-        double height = Math.Max(GanttCanvas.ActualHeight, 200);
         double left = 56;
         double top = 28;
         double bottomPad = 24;
         var ordered = result.Tasks.OrderBy(t => t.Id).ToList();
-        double rowH = Math.Max(28, (height - top - bottomPad) / ordered.Count);
-        double scale = (width - left - 24) / Math.Max(1, result.ProjectDuration);
+        double rowH = 32;
+        double scale = 40;
+        double width = Math.Max(640, left + result.ProjectDuration * scale + 40);
+        double height = Math.Max(240, top + ordered.Count * rowH + bottomPad);
+
+        GanttCanvas.Width = width;
+        GanttCanvas.Height = height;
 
         for (int i = 0; i <= result.ProjectDuration; i += Math.Max(1, result.ProjectDuration / 10))
         {
@@ -123,7 +126,7 @@ public partial class NetworkPlanningCharts
 
             var people = new TextBlock
             {
-                Text = $"{task.People} чол.",
+                Text = $"{task.Duration} дн, {task.People} чол.",
                 Foreground = TextBrush,
                 FontSize = 10
             };
@@ -136,15 +139,18 @@ public partial class NetworkPlanningCharts
     private void DrawResourceLoad(NetworkSchedule schedule)
     {
         CriticalPathSolveResult result = schedule.Result;
-        double width = Math.Max(ResourceCanvas.ActualWidth, 200);
-        double height = Math.Max(ResourceCanvas.ActualHeight, 200);
         double left = 48;
-        double bottom = height - 32;
         double top = 24;
-        double chartH = bottom - top;
-        double scale = (width - left - 24) / Math.Max(1, result.ProjectDuration);
+        double scale = 40;
         var loads = ResourceLoadCalculator.Compute(schedule);
         double maxLoad = Math.Max(1, loads.Max(l => l.People));
+        double chartH = Math.Max(180, maxLoad * 24);
+        double width = Math.Max(640, left + result.ProjectDuration * scale + 40);
+        double bottom = top + chartH;
+        double height = bottom + 32;
+
+        ResourceCanvas.Width = width;
+        ResourceCanvas.Height = height;
 
         for (int i = 0; i <= result.ProjectDuration; i += Math.Max(1, result.ProjectDuration / 10))
         {
