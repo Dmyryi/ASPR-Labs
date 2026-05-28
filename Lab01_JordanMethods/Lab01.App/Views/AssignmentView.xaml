@@ -12,7 +12,7 @@
             <Border Margin="14,0,0,0" Padding="10,4" CornerRadius="8"
                     Background="{StaticResource CardSurface}" BorderBrush="{StaticResource CardStroke}" BorderThickness="1"
                     VerticalAlignment="Center">
-                <TextBlock Text="Угорський метод (рис. 9.1–9.2)" Style="{StaticResource SubtitleText}" FontWeight="SemiBold" FontSize="13"/>
+                <TextBlock Text="Угорський метод" Style="{StaticResource SubtitleText}" FontWeight="SemiBold" FontSize="13"/>
             </Border>
         </StackPanel>
 

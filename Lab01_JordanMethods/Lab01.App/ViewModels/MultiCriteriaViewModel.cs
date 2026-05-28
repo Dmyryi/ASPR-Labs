@@ -31,7 +31,6 @@ public sealed class MultiCriteriaViewModel : ViewModelBase
     private string _gameMatrixDisplay = string.Empty;
     private string _weightsDisplay = string.Empty;
     private string _compromiseDisplay = string.Empty;
-    private string _summaryDisplay = string.Empty;
     private string _savedProtocolPath = string.Empty;
 
     public MultiCriteriaViewModel(MultiCriteriaSolver solver, IProtocolSaver protocolSaver)
@@ -91,12 +90,6 @@ public sealed class MultiCriteriaViewModel : ViewModelBase
     {
         get => _compromiseDisplay;
         private set { _compromiseDisplay = value; OnPropertyChanged(); }
-    }
-
-    public string SummaryDisplay
-    {
-        get => _summaryDisplay;
-        private set { _summaryDisplay = value; OnPropertyChanged(); }
     }
 
     public string SavedProtocolPath
@@ -166,13 +159,6 @@ public sealed class MultiCriteriaViewModel : ViewModelBase
         GameMatrixDisplay = FormatSquareMatrix(r.GameMatrix, k);
         WeightsDisplay = string.Join("; ", r.Weights.Select(v => Fmt(v)));
         CompromiseDisplay = string.Join("; ", r.CompromiseSolution.Select(v => Fmt(v)));
-
-        var sb = new StringBuilder();
-        sb.AppendLine($"Матрична гра: {r.GameResult.SolutionKind}");
-        sb.AppendLine($"Значення гри: {Fmt(r.GameResult.GameValue)}");
-        for (int i = 0; i < k; i++)
-            sb.AppendLine($"Z{i + 1}* = {Fmt(r.PerObjectiveSolutions[i].Z)}");
-        SummaryDisplay = sb.ToString().TrimEnd();
     }
 
     private void ClearOutputs()
@@ -183,7 +169,6 @@ public sealed class MultiCriteriaViewModel : ViewModelBase
         GameMatrixDisplay = string.Empty;
         WeightsDisplay = string.Empty;
         CompromiseDisplay = string.Empty;
-        SummaryDisplay = string.Empty;
     }
 
     private void LoadExample1()

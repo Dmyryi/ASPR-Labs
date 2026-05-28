@@ -12,7 +12,7 @@
             <Border Margin="14,0,0,0" Padding="10,4" CornerRadius="8"
                     Background="{StaticResource CardSurface}" BorderBrush="{StaticResource CardStroke}" BorderThickness="1"
                     VerticalAlignment="Center">
-                <TextBlock Text="Ігровий підхід (рис. 1)" Style="{StaticResource SubtitleText}" FontWeight="SemiBold" FontSize="13"/>
+                <TextBlock Text="Ігровий підхід" Style="{StaticResource SubtitleText}" FontWeight="SemiBold" FontSize="13"/>
             </Border>
         </StackPanel>
 
@@ -69,9 +69,7 @@
                     <TextBox Text="{Binding WeightsDisplay, Mode=OneWay}" Style="{StaticResource InputTextBox}" IsReadOnly="True" FontFamily="Consolas" Margin="0,0,0,8"/>
 
                     <TextBlock Text="Компромісний розв'язок:" Style="{StaticResource SectionHeader}" Margin="0,0,0,4"/>
-                    <TextBox Text="{Binding CompromiseDisplay, Mode=OneWay}" Style="{StaticResource InputTextBox}" IsReadOnly="True" FontFamily="Consolas" Margin="0,0,0,8"/>
-
-                    <TextBlock Text="{Binding SummaryDisplay, Mode=OneWay}" Style="{StaticResource HintText}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                    <TextBox Text="{Binding CompromiseDisplay, Mode=OneWay}" Style="{StaticResource InputTextBox}" IsReadOnly="True" FontFamily="Consolas" Margin="0,0,0,12"/>
 
                     <StackPanel Orientation="Horizontal">
                         <Button Command="{Binding LoadExample1Command}" Style="{StaticResource SecondaryButton}" Padding="12,8" Margin="0,0,8,0">
