@@ -56,7 +56,9 @@ public partial class App : Application
                 sp));
         services.AddTransient<GomoryViewModel>();
         services.AddTransient<MatrixGameViewModel>(sp =>
-            new MatrixGameViewModel(sp.GetRequiredService<MatrixGameSolver>()));
+            new MatrixGameViewModel(
+                sp.GetRequiredService<MatrixGameSolver>(),
+                sp.GetRequiredService<IProtocolSaver>()));
         services.AddTransient<MainViewModel>();
 
         services.AddSingleton<Func<InverseMatrixViewModel>>(sp => sp.GetRequiredService<InverseMatrixViewModel>);
